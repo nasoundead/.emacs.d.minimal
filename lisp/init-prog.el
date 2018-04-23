@@ -1,33 +1,4 @@
-;; init-prog.el --- Initialize prog configurations.	-*- lexical-binding: t -*-
-;;
-;; Author: Vincent Zhang <seagle0128@gmail.com>
-;; Version: 3.1.0
-;; URL: https://github.com/seagle0128/.emacs.d
-;; Keywords:
-;; Compatibility:
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;; Commentary:
-;;             Configurations for prog mode.
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation; either version 2, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; Floor, Boston, MA 02110-1301, USA.
-;;
+;; init-prog.el
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Code:
@@ -108,6 +79,43 @@
   (after-load 'origami
     (define-key origami-mode-map (kbd "C-{") 'origami-recursively-toggle-node)
     (define-key origami-mode-map (kbd "C-M-{") 'origami-toggle-all-nodes)))
+
+(use-package lsp-mode
+  :init
+  (with-eval-after-load 'company
+    (use-package company-lsp
+      :init (cl-pushnew (company-backend-with-yas 'company-lsp) company-backends))))
+(use-package lsp-ui
+  :init
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  :config
+  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  (lsp-ui-peek-jump-backward)
+  (lsp-ui-peek-jump-forward)
+  (with-eval-after-load 'flycheck
+    ;; (require 'lsp-flycheck)
+    (add-hook 'python-mode-hook 'flycheck-mode))
+  )
+;; Go support for lsp-mode using Sourcegraph's Go Language Server
+;; Install: go get github.com/sourcegraph/go-langserver
+(use-package lsp-go
+  :commands lsp-go-enable
+  :init (add-hook 'go-mode-hook #'lsp-go-enable))
+
+;; Python support for lsp-mode using pyls.
+;; Install: pip install python-language-server
+(use-package lsp-python
+  :commands lsp-python-enable
+  :init (add-hook 'python-mode-hook #'lsp-python-enable))
+
+;; Java support for lsp-mode using the Eclipse JDT Language Server.
+;; Install:
+;; wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
+;; tar jdt-language-server-latest.tar.gz -C ~/.emacs.d/eclipse.jdt.ls/server/
+(use-package lsp-java
+  :commands lsp-java-enable
+  :init (add-hook 'java-mode-hook #'lsp-java-enable))
 
 (provide 'init-prog)
 
