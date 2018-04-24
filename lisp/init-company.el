@@ -1,83 +1,47 @@
-;; init-company.el --- Initialize company configurations.	-*- lexical-binding: t -*-
-;;
-;; Author: Vincent Zhang <seagle0128@gmail.com>
-;; Version: 3.1.0
-;; URL: https://github.com/seagle0128/.emacs.d
-;; Keywords:
-;; Compatibility:
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;; Commentary:
-;;             Company configurations.
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation; either version 2, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; Floor, Boston, MA 02110-1301, USA.
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;; Code:
+;; WAITING: haskell-mode sets tags-table-list globally, breaks tags-completion-at-point-function
+;; TODO Default sort order should place [a-z] before punctuation
 
-(use-package company
-  :diminish company-mode
-  :bind (("M-/" . company-complete)
-         ("C-c C-y" . company-yasnippet)
-         :map company-active-map
-         ("C-p" . company-select-previous)
-         ("C-n" . company-select-next)
-         ("<tab>" . company-complete-common-or-cycle)
-         ("<backtab>" . company-select-previous)
-         :map company-search-map
-         ("C-p" . company-select-previous)
-         ("C-n" . company-select-next))
-  :init (add-hook 'after-init-hook #'global-company-mode)
-  :config
-  ;; aligns annotation to the right hand side
-  (setq company-tooltip-align-annotations t)
+(setq tab-always-indent 'complete)
+(add-to-list 'completion-styles 'initials t)
 
-  (setq company-idle-delay 0.5
-        company-minimum-prefix-length 2
-        company-require-match nil
-        company-dabbrev-ignore-case nil
-        company-dabbrev-downcase nil)
+(when (maybe-require-package 'company)
+  (add-hook 'after-init-hook 'global-company-mode)
+  (after-load 'company
+    (diminish 'company-mode "CMP")
+    (define-key company-mode-map (kbd "M-/") 'company-complete)
+    (define-key company-active-map (kbd "M-/") 'company-other-backend)
+    (define-key company-active-map (kbd "C-n") 'company-select-next)
+    (define-key company-active-map (kbd "C-p") 'company-select-previous)
+    (setq-default company-dabbrev-other-buffers 'all
+                  company-tooltip-align-annotations t))
+  (global-set-key (kbd "M-C-/") 'company-complete)
+  (when (maybe-require-package 'company-quickhelp)
+    (add-hook 'after-init-hook 'company-quickhelp-mode))
 
-  ;; Popup documentation for completion candidates
-  (use-package company-quickhelp
-    :if (display-graphic-p)
-    :bind (:map company-active-map
-                ("M-h" . company-quickhelp-manual-begin))
-    ;; :init (company-quickhelp-mode t)
-    )
+  (defun sanityinc/local-push-company-backend (backend)
+    "Add BACKEND to a buffer-local version of `company-backends'."
+    (make-local-variable 'company-backends)
+    (push backend company-backends)))
 
-  ;; Support yas in commpany
-  ;; Note: Must be the last to involve all backends
-  (defvar company-enable-yas t
-    "Enable yasnippet for all backends.")
+;; Suspend page-break-lines-mode while company menu is active
+;; (see https://github.com/company-mode/company-mode/issues/416)
+(after-load 'company
+  (after-load 'page-break-lines
+    (defvar sanityinc/page-break-lines-on-p nil)
+    (make-variable-buffer-local 'sanityinc/page-break-lines-on-p)
 
-  (defun company-backend-with-yas (backend)
-    (if (or (not company-enable-yas)
-            (and (listp backend) (member 'company-yasnippet backend)))
-        backend
-      (append (if (consp backend) backend (list backend))
-              '(:with company-yasnippet))))
+    (defun sanityinc/page-break-lines-disable (&rest ignore)
+      (when (setq sanityinc/page-break-lines-on-p (bound-and-true-p page-break-lines-mode))
+        (page-break-lines-mode -1)))
 
-  (setq company-backends (mapcar #'company-backend-with-yas company-backends)))
+    (defun sanityinc/page-break-lines-maybe-reenable (&rest ignore)
+      (when sanityinc/page-break-lines-on-p
+        (page-break-lines-mode 1)))
+
+    (add-hook 'company-completion-started-hook 'sanityinc/page-break-lines-disable)
+    (add-hook 'company-completion-finished-hook 'sanityinc/page-break-lines-maybe-reenable)
+    (add-hook 'company-completion-cancelled-hook 'sanityinc/page-break-lines-maybe-reenable)))
+
+
 
 (provide 'init-company)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-company.el ends here

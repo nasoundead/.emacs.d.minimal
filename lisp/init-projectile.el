@@ -1,61 +1,18 @@
-;; init-projectile.el --- Initialize projectile configurations.	-*- lexical-binding: t -*-
-;;
-;;; Code:
+(when (maybe-require-package 'projectile)
+  (add-hook 'after-init-hook 'projectile-mode)
 
-;; Manage and navigate projects
-(use-package projectile
-  :bind (("s-t" . projectile-find-file)) ; `cmd-t' or `super-t'
-  :init (add-hook 'after-init-hook #'projectile-mode)
-  :config
-  (setq projectile-mode-line
-        '(:eval (format "[%s]" (projectile-project-name))))
+  ;; The following code means you get a menu if you hit "C-c p" and wait
+  (after-load 'guide-key
+    (add-to-list 'guide-key/guide-key-sequence "C-c p"))
 
-  (setq projectile-known-projects-file
-        (expand-file-name "projectile-bookmarks.eld" cache-dir))
+  ;; Shorter modeline
+  (after-load 'projectile
+    (setq-default
+     projectile-mode-line
+     '(:eval
+       (if (file-remote-p default-directory)
+           " Proj"
+         (format " Proj[%s]" (projectile-project-name)))))))
 
-  (setq projectile-completion-system 'ivy)
 
-  (setq projectile-sort-order 'recentf)
-  (setq projectile-use-git-grep t)
-
-  (setq projectile-switch-project-action
-        '(lambda ()
-           (venv-projectile-auto-workon)
-           (projectile-find-file)))
-
-  ;; Faster indexing on Windows
-  ;; `ripgrep' is the fastest
-  (when sys/win32p
-    (when (executable-find "rg")
-      (setq projectile-generic-command "rg -0 --files --color=never --hidden")
-      (setq projectile-indexing-method 'alien)
-      (setq projectile-enable-caching nil))
-
-    ;; FIXME: too slow while getting submodule files on Windows
-    (setq projectile-git-submodule-command ""))
-
-  ;; Support Perforce project
-  (let ((val (or (getenv "P4CONFIG") ".p4config")))
-    (add-to-list 'projectile-project-root-files-bottom-up val))
-
-  ;; Rails project
-  (use-package projectile-rails
-    :diminish projectile-rails-mode
-    :init (projectile-rails-global-mode 1)))
-
-	
-(use-package ibuffer-projectile
-  :bind ("C-x C-b" . ibuffer)
-  :init
-  (setq ibuffer-filter-group-name-face 'font-lock-function-name-face)
-  (add-hook 'ibuffer-hook
-            (lambda ()
-              (ibuffer-auto-mode 1)
-              (ibuffer-projectile-set-filter-groups)
-              (unless (eq ibuffer-sorting-mode 'alphabetic)
-                (ibuffer-do-sort-by-alphabetic)))))
-				
 (provide 'init-projectile)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-projectile.el ends here

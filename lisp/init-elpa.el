@@ -1,22 +1,19 @@
-;;; init-package.el --- Initialize package configurations.	-*- lexical-binding: t -*-
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;; Code:
+(require 'package)
 
-;; (setq package-archives '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-;;                          ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
+
+;;; Install into separate package dirs for each Emacs version, to prevent bytecode incompatibility
+(let ((versioned-package-dir
+       (expand-file-name (format "elpa-%s.%s" emacs-major-version emacs-minor-version)
+                         user-emacs-directory)))
+  (setq package-user-dir versioned-package-dir))
 
-;; ELPA: refer to https://elpa.emacs-china.org/
+
+
+;;; Standard package repositories
 (setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
                          ("melpa" . "http://elpa.emacs-china.org/melpa/")
                          ("org" . "http://elpa.emacs-china.org/org/")
                          ))
-
-
-;; Initialize packages
-(setq package-enable-at-startup nil)    ; To prevent initialising twice
-(package-initialize)
 
 (defun config-proxy()
   "config proxy when you are using proxy to access internet"
@@ -26,11 +23,8 @@
         (list (list "127.0.0.1:3128"
                     (cons "Input your LDAP UID !"
                           (base64-encode-string "w012345:123456"))))))
-
-;; Setup `use-package'
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+
+;;; On-demand installation of packages
 
 (defun require-package (package &optional min-version no-refresh)
   "Install given PACKAGE, optionally requiring MIN-VERSION.
@@ -60,13 +54,36 @@ locate PACKAGE."
      (message "Couldn't install optional package `%s': %S" package err)
      nil)))
 
-(require-package 'diminish)
-(setq use-package-always-ensure t)
-(setq use-package-always-defer t)
-(setq use-package-expand-minimally t)
-(setq use-package-enable-imenu-support t)
+
+;;; Fire up package.el
 
-(provide 'init-package)
+(setq package-enable-at-startup nil)
+(package-initialize)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-package.el ends here
+
+
+(require-package 'fullframe)
+(fullframe list-packages quit-window)
+
+
+(require-package 'cl-lib)
+(require 'cl-lib)
+
+(defun sanityinc/set-tabulated-list-column-width (col-name width)
+  "Set any column with name COL-NAME to the given WIDTH."
+  (when (> width (length col-name))
+    (cl-loop for column across tabulated-list-format
+             when (string= col-name (car column))
+             do (setf (elt column 1) width))))
+
+(defun sanityinc/maybe-widen-package-menu-columns ()
+  "Widen some columns of the package menu table to avoid truncation."
+  (when (boundp 'tabulated-list-format)
+    (sanityinc/set-tabulated-list-column-width "Version" 13)
+    (let ((longest-archive-name (apply 'max (mapcar 'length (mapcar 'car package-archives)))))
+      (sanityinc/set-tabulated-list-column-width "Archive" longest-archive-name))))
+
+(add-hook 'package-menu-mode-hook 'sanityinc/maybe-widen-package-menu-columns)
+
+
+(provide 'init-elpa)

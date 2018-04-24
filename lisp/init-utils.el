@@ -1,91 +1,76 @@
-;; init-utils.el --- Initialize ultilities.	-*- lexical-binding: t -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;; Code:
+(if (fboundp 'with-eval-after-load)
+    (defalias 'after-load 'with-eval-after-load)
+  (defmacro after-load (feature &rest body)
+    "After FEATURE is loaded, evaluate BODY."
+    (declare (indent defun))
+    `(eval-after-load ,feature
+       '(progn ,@body))))
 
-;; A tree layout file explorer
-(use-package treemacs
-  :bind (([f8]        . treemacs-toggle)
-         ("M-0"       . treemacs-select-window)
-         ("C-c 1"     . treemacs-delete-other-windows))
-  :config
-  (setq treemacs-follow-after-init          t
-        treemacs-width                      35
-        treemacs-indentation                2
-        treemacs-git-integration            t
-        treemacs-collapse-dirs              3
-        treemacs-silent-refresh             nil
-        treemacs-change-root-without-asking nil
-        treemacs-sorting                    'alphabetic-desc
-        treemacs-show-hidden-files          t
-        treemacs-never-persist              nil
-        treemacs-is-never-other-window      nil
-        treemacs-goto-tag-strategy          'refetch-index)
 
-  (treemacs-follow-mode t)
-  (treemacs-filewatch-mode t))
+;;----------------------------------------------------------------------------
+;; Handier way to add modes to auto-mode-alist
+;;----------------------------------------------------------------------------
+(defun add-auto-mode (mode &rest patterns)
+  "Add entries to `auto-mode-alist' to use `MODE' for all given file `PATTERNS'."
+  (dolist (pattern patterns)
+    (add-to-list 'auto-mode-alist (cons pattern mode))))
 
-;; Projectile integration for treemacs
-(use-package treemacs-projectile
-  :config
-  (setq treemacs-header-function #'treemacs-projectile-create-header))
 
-;; Dash: only avaliable on macOS
-(when sys/macp
-  (use-package dash-at-point
-    :bind (("\C-cd" . dash-at-point)
-           ("\C-ce" . dash-at-point-with-docset))))
+;;----------------------------------------------------------------------------
+;; String utilities missing from core emacs
+;;----------------------------------------------------------------------------
+(defun sanityinc/string-all-matches (regex str &optional group)
+  "Find all matches for `REGEX' within `STR', returning the full match string or group `GROUP'."
+  (let ((result nil)
+        (pos 0)
+        (group (or group 0)))
+    (while (string-match regex str pos)
+      (push (match-string group str) result)
+      (setq pos (match-end group)))
+    result))
 
-;; Youdao Dictionay
-(use-package youdao-dictionary
-  :bind (("C-c y" . youdao-dictionary-search-at-point)
-         ("C-c Y" . youdao-dictionary-search-at-point-tooltip))
-  :config
-  ;; Cache documents
-  (setq url-automatic-caching t)
 
-  ;; Enable Chinese word segmentation support (支持中文分词)
-  (setq youdao-dictionary-use-chinese-word-segmentation t))
+;;----------------------------------------------------------------------------
+;; Delete the current file
+;;----------------------------------------------------------------------------
+(defun delete-this-file ()
+  "Delete the current file, and kill the buffer."
+  (interactive)
+  (unless (buffer-file-name)
+    (error "No file is currently being edited"))
+  (when (yes-or-no-p (format "Really delete '%s'?"
+                             (file-name-nondirectory buffer-file-name)))
+    (delete-file (buffer-file-name))
+    (kill-this-buffer)))
 
-;; Search utils: `ag', `rg', `pt'
-(use-package ag
-  :init
-  (with-eval-after-load 'projectile
-    (bind-key "C-c p s s" 'ag-project projectile-mode-map))
-  :config
-  (setq ag-highlight-search t)
-  (setq ag-reuse-buffers t))
 
-(use-package wgrep-ag
-  :config
-  (setq wgrep-auto-save-buffer t)
-  (setq wgrep-change-readonly-file t))
+;;----------------------------------------------------------------------------
+;; Rename the current file
+;;----------------------------------------------------------------------------
+(defun rename-this-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (unless filename
+      (error "Buffer '%s' is not visiting a file!" name))
+    (progn
+      (when (file-exists-p filename)
+        (rename-file filename new-name 1))
+      (set-visited-file-name new-name)
+      (rename-buffer new-name))))
 
-;; Discover key bindings and their meaning for the current Emacs major mode
-(use-package discover-my-major
-  :bind (("C-h M-m" . discover-my-major)
-         ("C-h M-M" . discover-my-mode)))
+;;----------------------------------------------------------------------------
+;; Browse current HTML file
+;;----------------------------------------------------------------------------
+(defun browse-current-file ()
+  "Open the current file as a URL using `browse-url'."
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (if (and (fboundp 'tramp-tramp-file-p)
+             (tramp-tramp-file-p file-name))
+        (error "Cannot open tramp file")
+      (browse-url (concat "file://" file-name)))))
 
-;; Log keyboard commands to buffer
-(use-package command-log-mode
-  :diminish (command-log-mode . "¢")
-  :init (setq command-log-mode-auto-show t))
-
-;; A Simmple and cool pomodoro timer
-(use-package pomidor
-  :bind (("<f12>" . pomidor)))
-
-;; Misc
-(use-package copyit)                    ; copy path, url, etc.
-(use-package diffview)                  ; side-by-side diff view
-(use-package esup)                      ; Emacs startup profiler
-(use-package htmlize)                   ; covert to html
-(use-package list-environment)
-(use-package memory-usage)
-(use-package open-junk-file)
-(use-package try)
 
 (provide 'init-utils)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-utils.el ends here
