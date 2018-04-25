@@ -14,7 +14,7 @@ This is helpful for writeroom-mode, in particular."
 
 (add-hook 'visual-fill-column-mode-hook
           'sanityinc/maybe-adjust-visual-fill-column)
-							
+
 (cond
  ;; case: windows
  ((string-equal system-type "windows-nt") ; Microsoft Windows
@@ -23,7 +23,7 @@ This is helpful for writeroom-mode, in particular."
   (set-fontset-font "fontset-default" 'chinese-gbk "宋体")
 
   (setq face-font-rescale-alist '(("宋体" . 1.2)
-                                ("微软雅黑" . 1.1)))
+                                  ("Microsoft Yahei" . 1.1)))
   (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
   (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease) )
  ;; case: Max OS X
