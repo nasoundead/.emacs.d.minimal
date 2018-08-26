@@ -1,86 +1,68 @@
 ;;; one file config
 
-(defconst *spell-check-support-enabled* nil) ;; Enable with t if you prefer
-(defconst *is-mac* (eq system-type 'darwin))
-(defconst *is-linux* (eq system-type 'darwin))
+(defconst EMACS26+
+  (eval-when-compile (not (version< emacs-version "26"))))
+(defconst EMACS27+
+  (eval-when-compile (not (version< emacs-version "27"))))
 
-;;----------------------------------------------------------------------------
-;; Bootstrap config
-;;----------------------------------------------------------------------------
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(defconst IS-MAC     (eq system-type 'darwin))
+(defconst IS-LINUX   (eq system-type 'gnu/linux))
+(defconst IS-WIN (memq system-type '(cygwin windows-nt ms-dos)))
+(defconst sea-emacs-dir
+  (eval-when-compile (file-truename user-emacs-directory))
+  "The path to this emacs.d directory. Must end in a slash.")
+(defconst sea-local-dir (concat sea-emacs-dir ".local/")
+  "Root directory for local Emacs files. Use this as permanent storage for files
+that are safe to share across systems (if this config is symlinked across
+several computers).")
 
-;;; Standard package repositories
+(defconst sea-etc-dir (concat sea-local-dir "etc/")
+  "Directory for non-volatile storage.
+
+Use this for files that don't change much, like servers binaries, external
+dependencies or long-term shared data.")
+
+(defconst sea-cache-dir (concat sea-local-dir "cache/")
+  "Directory for volatile storage.
+
+Use this for files that change often, like cache files.")
+
 (require 'package)
-(setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
-                         ("melpa" . "http://elpa.emacs-china.org/melpa/")
-                         ("org" . "http://elpa.emacs-china.org/org/")))
+(setq package-enable-at-startup nil
+      package-archives '(("gnu" . "http://elpa.emacs-china.org/gnu/")
+			 ("melpa" . "http://elpa.emacs-china.org/melpa/")
+			 ("org" . "http://elpa.emacs-china.org/org/")
+			 ("sunrise-commander" . "http://elpa.emacs-china.org/sunrise-commander/")
+			 ("user42" . "http://elpa.emacs-china.org/user42/")
+			 ))
 (package-initialize)
-(defun config-proxy()
-  "config proxy when you are using proxy to access internet"
-  (setq url-proxy-services '(("http" . "127.0.0.1:3128") ;
-                             ("https" . "127.0.0.1:3128")))
-  (setq url-http-proxy-basic-auth-storage
-        (list (list "127.0.0.1:3128"
-                    (cons "Input your LDAP UID !"
-                          (base64-encode-string "w012345:123456"))))))
-(defun require-package (package &optional min-version no-refresh)
-  "Install given PACKAGE, optionally requiring MIN-VERSION.
-If NO-REFRESH is non-nil, the available package lists will not be
-re-downloaded in order to locate PACKAGE."
-  (if (package-installed-p package min-version)
-      t
-    (if (or (assoc package package-archive-contents) no-refresh)
-        (if (boundp 'package-selected-packages)
-            ;; Record this as a package the user installed explicitly
-            (package-install package nil)
-          (package-install package))
-      (progn
-        (package-refresh-contents)
-        (require-package package min-version t)))))
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+(setq use-package-always-ensure t)
+(setq use-package-always-defer t)
+(use-package diminish)
 
-(setq make-backup-files nil)
-;; 设定不产生备份文件
-(setq auto-save-mode nil)
-;;自动保存模式
-(setq-default make-backup-files nil)
-;; 不生成临时文件
-;; 隐藏滚动栏和菜单，最好用下面三条
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-(setq visible-bell t)
-;;关闭烦人的出错时的提示声
-(setq inhibit-startup-message t)
-;;关闭emacs启动时的画面
-(setq gnus-inhibit-startup-message t)
-;;关闭gnus启动时的画面
-(fset 'yes-or-no-p 'y-or-n-p)
-(show-paren-mode t)
-(setq frame-title-format "emacs@%b")
-(setq kill-ring-max 200)
-(setq-default indent-tabs-mode nil)
-(setq default-tab-width 8)
-(setq tab-stop-list ())
+(add-to-list 'load-path (concat user-emacs-directory "lisp"))
+(require 'init-basic)
+(require 'init-ui)
 
 
-(require-package 'use-package)
-(require-package 'wgrep)
-(require-package 'diminish)
-(require-package 'scratch)
-(require-package 'command-log-mode)
-(require-package 'cl-lib)
-(require 'cl-lib)
-
+;; Start server
 (require 'server)
 (unless (server-running-p)
-  (server-start))
+    (server-start))
+  
+(dolist (dir (list sea-cache-dir sea-etc-dir))
+        (unless (file-directory-p dir)
+          (make-directory dir t)))
 
-;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface
-;;----------------------------------------------------------------------------
+(setq custom-file (concat sea-cache-dir "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
-(provide 'init)
 
 ;; Local Variables:
 ;; coding: utf-8
