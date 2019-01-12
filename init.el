@@ -46,6 +46,7 @@ Use this for files that change often, like cache files.")
 (use-package general)
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
+(add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
 (require 'init-basic)
 (require 'init-ui)
 (require 'init-ivy)

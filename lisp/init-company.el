@@ -68,11 +68,14 @@
                 all-the-icons-material
                 all-the-icons-octicon
                 all-the-icons-alltheicon)
-    ;:hook (company-mode . company-box-mode)
+    :hook (company-mode . company-box-mode)
+	; :init 
+	; (add-hook 'company-box-mode
+              ; (lambda () (message (all-the-icons-wicon "tornado"))))
     :config
-	(setq company-box-backends-colors nil)
+	;(setq company-box-backends-colors nil)
 	(setq company-box-icons-unknown 'fa_question_circle)
-     (with-eval-after-load 'all-the-icons
+    (with-eval-after-load 'all-the-icons
         (setq company-box-icons-unknown
               (all-the-icons-octicon "file-text" :v-adjust -0.05))
 
