@@ -43,10 +43,13 @@ Use this for files that change often, like cache files.")
 (setq use-package-always-ensure t)
 (setq use-package-always-defer t)
 (use-package diminish)
+(use-package general)
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 (require 'init-basic)
 (require 'init-ui)
+(require 'init-ivy)
+(require 'init-company)
 
 
 ;; Start server

@@ -52,6 +52,7 @@
  window-resize-pixelwise t
  frame-resize-pixelwise t
  kill-ring-max 200
+fill-column 80
  save-interprogram-paste-before-kill t)
  
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -61,8 +62,6 @@
       show-paren-when-point-inside-paren t)
 (add-hook 'after-init-hook #'show-paren-mode)
  
-(if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 (when IS-WIN
   ;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
@@ -107,9 +106,28 @@
     (exec-path-from-shell-initialize)))
 
 ;; Show native line numbers if possible, otherwise use linum
-(if (version<= "26.0.50" emacs-version )
-    (global-display-line-numbers-mode)
-  (add-hook 'after-init-hook #'global-linum-mode))
+(if (fboundp 'display-line-numbers-mode)
+    (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+    ;; (use-package display-line-numbers
+    ;;   :ensure nil
+    ;;   :hook (prog-mode . display-line-numbers-mode))
+  (use-package linum-off
+    :demand
+    :defines linum-format
+    :hook (after-init . global-linum-mode)
+    :config
+    (setq linum-format "%4d ")
+
+    ;; Highlight current line number
+    (use-package hlinum
+      :defines linum-highlight-in-all-buffersp
+      :hook (global-linum-mode . hlinum-activate)
+      :init
+      (setq linum-highlight-in-all-buffersp t)
+      (custom-set-faces
+       `(linum-highlight-face
+         ((t (:inherit 'default :background ,(face-background 'default) :foreground ,(face-foreground 'default)))))))))
+
 
 (use-package which-key
   :diminish which-key-mode
@@ -125,12 +143,15 @@
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom))
 
-(use-package ido-vertical-mode
+;; Display Time
+(use-package time
+  :ensure nil
+  :unless (display-graphic-p)
+  :hook (after-init . display-time-mode)
   :init
-  (ido-vertical-mode 1)
-  :config
-  (setq ido-vertical-show-count 1))
-
+  (setq display-time-24hr-format t)
+  (setq display-time-day-and-date t))
+  
 ;; Kill & Mark things easily
 (use-package easy-kill
   :bind (([remap kill-ring-save] . easy-kill)
@@ -138,7 +159,6 @@
 
 ;; Interactively insert items from kill-ring
 (use-package browse-kill-ring
-  :bind ("C-c k" . browse-kill-ring)
   :init (add-hook 'after-init-hook #'browse-kill-ring-default-keybindings))
   
 (use-package dash

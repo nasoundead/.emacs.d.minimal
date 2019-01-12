@@ -1,93 +1,103 @@
 ;;; init-ivy.el -*- lexical-binding: t; -*-
 ;; -*- lexical-binding: t -*-
+;; Copyright (C) 2019 Bruce Wong
+
+;; Author: Bruce Wong <nasoundead@163.com>
+;; URL: https://github.com/nasoundead/.emacs.d.minimal
+
+;; This file is not part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+;; Floor, Boston, MA 02110-1301, USA.
+;;
 
 (use-package ivy
   :config
   (setq
+   ivy-wrap t
+   projectile-completion-system 'ivy
+   smex-completion-method 'ivy
    ivy-fixed-height-minibuffer t
-   ivy-use-selectable-prompt t ; so I can chose what I actually typed
-   ivy-initial-inputs-alist nil ; don't use ^ as initial input
-   ivy-format-function 'ivy-format-function-arrow
-   ivy-use-virtual-buffers t
-   ivy-virtual-abbreviate 'abbreviate)
+   ; don't use ^ as initial input
+   ivy-initial-inputs-alist nil 
+   ivy-format-function #'ivy-format-function-line
+   ;; disable magic slash on non-match
+   ivy-magic-slash-non-match-action nil
+   ;; don't show recent files in switch-buffer
+   ivy-use-virtual-buffers nil
+   ;; ...but if that ever changes, show their full path
+   ivy-virtual-abbreviate 'full
+   ;; don't quit minibuffer on delete-error
+   ivy-on-del-error-function nil
+   ;; enable ability to select prompt (alternative to `ivy-immediate-done')
+   ivy-use-selectable-prompt t)
+   
   (ivy-mode)
   (general-define-key
-          :states '(normal visual)
-          "RET" #'ivy-switch-buffer)
-         (general-define-key
-          :keymaps 'override
-          "<S-return>" #'ivy-switch-buffer)
-       (general-define-key
-        :keymaps 'override
-        "<C-return>" #'ivy-switch-buffer)
-		(general-define-key
-   :keymaps 'override
-   "C-c C-p" #'counsel-yank-pop
-   "C-c C-m" #'counsel-mark-ring
-   "C-c C-r" #'ivy-resume)
+   "<S-return>" #'ivy-switch-buffer
+   "<C-return>" #'ivy-switch-buffer
+   "C-c C-p"    #'counsel-yank-pop
+   "C-c C-m"    #'counsel-mark-ring
+   "C-c C-r"    #'ivy-resume)
   )
-(moon-default-leader
-    ;; other
-    "SPC" #'counsel-M-x
-    ;; files
-    "ff"  #'counsel-find-file
-    "fr"  #'counsel-recentf
-    "fL"  #'counsel-locate
-    ;; help
-    "hb"  #'counsel-descbinds
-    "hf"  #'counsel-describe-function
-    "hF"  #'counsel-describe-face
-    "hl"  #'counsel-find-library
-    "hm"  #'spacemacs/describe-mode
-    "hk"  #'describe-key
-    "ho"  #'describe-symbol
-    "hv"  #'counsel-describe-variable
-    "hd"  #'apropos
-    "hi"  #'counsel-info-lookup-symbol
-    "hR"  #'spacemacs/counsel-search-docs
-    "?"   #'counsel-apropos
-    ;; insert
-    "iu"  #'counsel-unicode-char
-    ;; search
-    "si"  #'counsel-imenu
-    "ss"  #'moon/smart-swiper
-    "sr"  #'counsel-rg
-    ;; themes
-    "Ts"  #'counsel-load-theme
-    ;; buffer
-    "bb"  #'ivy-switch-buffer
-    "RET" #'counsel-recentf
-    )
-
 
 (use-package swiper :commands (swiper swiper-all))
 (use-package counsel
   :config
   (counsel-mode 1)
-  (after-load evil
-    (defun moon-override-yank-pop (&optional arg)
-      "Delete the region before inserting poped string."
-      (when (and (or evil-mode evil-local-mode) (eq 'visual evil-state))
-        (kill-region (region-beginning) (region-end))))
-    (advice-add 'counsel-yank-pop :before #'moon-override-yank-pop))
-  :commands (counsel-ag counsel-rg counsel-pt
-                        counsel-apropos counsel-bookmark
-                        counsel-describe-function
-                        counsel-describe-variable
-                        counsel-describe-face
-                        counsel-M-x counsel-file-jump
-                        counsel-find-file counsel-find-library
-                        counsel-info-lookup-symbol
-                        counsel-imenu counsel-recentf
-                        counsel-yank-pop
-                        counsel-descbinds counsel-org-capture
-                        counsel-grep-or-swiper))
-(use-package smex
-  :commands (smex smex-major-mode-commands)
-  :config (setq smex-save-file (concat sea-cache-dir "smex-items")))
+  :init
+  (general-define-key
+    [remap apropos]                  #'counsel-apropos
+    [remap bookmark-jump]            #'counsel-bookmark
+    [remap describe-face]            #'counsel-describe-face
+    [remap describe-function]        #'counsel-describe-function
+    [remap describe-variable]        #'counsel-describe-variable
+    [remap execute-extended-command] #'counsel-M-x
+    [remap find-file]                #'counsel-find-file
+    [remap find-library]             #'counsel-find-library
+    [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
+    [remap imenu]                    #'counsel-imenu
+    [remap recentf-open-files]       #'counsel-recentf
+    [remap org-capture]              #'counsel-org-capture
+    [remap swiper]                   #'counsel-grep-or-swiper)
+  :config
+  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        ;; Add smart-casing and compressed archive searching (-zS) to default
+        ;; command arguments:
+        counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
+        counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
+        counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
+)
 
-(use-package (ivy-filthy-rich :repo "casouri/ivy-filthy-rich" :fetcher github)
-  :after counsel
-  :config (ivy-filthy-rich-mode))
+(use-package wgrep
+  :commands wgrep-change-to-wgrep-mode
+  :config (setq wgrep-auto-save-buffer t))
+
+(use-package flx
+  :defer t  ; is loaded by ivy
+  :init
+  (setq ivy-re-builders-alist
+        '((counsel-ag . ivy--regex-plus)
+          (counsel-grep . ivy--regex-plus)
+          (swiper . ivy--regex-plus)
+          (t . ivy--regex-fuzzy))
+        ivy-initial-inputs-alist nil))
+		
+;; Used by `counsel-M-x'
+(use-package amx
+  :config (setq amx-save-file (concat sea-cache-dir "amx-items")))
+
 
 (provide 'init-ivy)
