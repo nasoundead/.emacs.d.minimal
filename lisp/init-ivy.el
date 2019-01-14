@@ -22,6 +22,55 @@
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 ;;
+(defmacro +ivy-do-action! (action)
+  "Returns an interactive lambda that sets the current ivy action and
+immediately runs it on the current candidate (ending the ivy session)."
+  `(lambda ()
+     (interactive)
+     (ivy-set-action ,action)
+     (setq ivy-exit 'done)
+     (exit-minibuffer)))
+
+;;;###autoload
+(defun +ivy/wgrep-occur ()
+  "Invoke the search+replace wgrep buffer on the current ag/rg search results."
+  (interactive)
+  (unless (window-minibuffer-p)
+    (user-error "No completion session is active"))
+  (require 'wgrep)
+  (let* ((caller (ivy-state-caller ivy-last))
+         (occur-fn (plist-get ivy--occurs-list caller))
+         (buffer
+          (generate-new-buffer
+           (format "*ivy-occur%s \"%s\"*"
+                   (if caller (concat " " (prin1-to-string caller)) "")
+                   ivy-text))))
+    (with-current-buffer buffer
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (funcall occur-fn))
+      (setf (ivy-state-text ivy-last) ivy-text)
+      (setq ivy-occur-last ivy-last)
+      (setq-local ivy--directory ivy--directory))
+    (ivy-exit-with-action
+     `(lambda (_)
+        (pop-to-buffer ,buffer)
+        (ivy-wgrep-change-to-wgrep-mode)))))
+		
+;;;###autoload
+(defun +ivy-git-grep-other-window-action (x)
+  "Opens the current candidate in another window."
+  (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" x)
+    (select-window
+     (with-ivy-window
+       (let ((file-name   (match-string-no-properties 1 x))
+             (line-number (match-string-no-properties 2 x)))
+         (find-file-other-window (expand-file-name file-name (ivy-state-directory ivy-last)))
+         (goto-char (point-min))
+         (forward-line (1- (string-to-number line-number)))
+         (re-search-forward (ivy--regex ivy-text t) (line-end-position) t)
+         (run-hooks 'counsel-grep-post-action-hook)
+         (selected-window))))))
 
 (use-package ivy
   :config
@@ -79,7 +128,14 @@
         counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
         counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
         counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
+  (general-define-key 
+    :keymap 'counsel-ag-map
+	[backtab] '+ivy/wgrep-occur      ; search/replace on results
+	[tab]     'ivy-call-and-recenter ; preview
+	"M-RET"   '(+ivy-do-action! #'+ivy-git-grep-other-window-action)
+	)
 )
+
 
 (use-package wgrep
   :commands wgrep-change-to-wgrep-mode

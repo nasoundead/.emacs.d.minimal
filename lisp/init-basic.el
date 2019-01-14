@@ -52,15 +52,63 @@
  window-resize-pixelwise t
  frame-resize-pixelwise t
  kill-ring-max 200
-fill-column 80
+ fill-column 80
  save-interprogram-paste-before-kill t)
- 
+
 (fset 'yes-or-no-p 'y-or-n-p)
+
+;; auto close bracket insertion. New in emacs 24
+(electric-pair-mode 1)
+;; make electric-pair-mode work on more brackets
+(setq electric-pair-pairs
+      '(
+        (?\" . ?\")
+        (?\{ . ?\})))
+		
+;; revert buffers for changed files
+(global-auto-revert-mode 1)
+(setq auto-revert-verbose nil)
+
 ;; highlight matching delimiters
 (setq show-paren-delay 0.1
       show-paren-highlight-openparen t
       show-paren-when-point-inside-paren t)
 (add-hook 'after-init-hook #'show-paren-mode)
+
+ ;; Keep track of recently opened files
+(use-package recentf
+  :init
+  (add-hook 'find-file-hook (lambda ()
+                              (unless recentf-mode
+                                (recentf-mode)
+                                (recentf-track-opened-file))))
+  :config
+  (setq recentf-save-file (concat sea-cache-dir "recentf")
+        recentf-max-menu-items 0
+        recentf-max-saved-items 300
+        recentf-filename-handlers '(file-truename)
+        recentf-exclude
+        (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+              "^/var/folders/.+$"
+              ;; ignore private sea temp files (but not all of them)
+              (concat "^" (file-truename sea-cache-dir)))))
+
+(use-package savehist
+  :ensure nil
+  :init
+  (setq enable-recursive-minibuffers t ; Allow commands in minibuffers
+        history-length 1000
+        savehist-additional-variables '(mark-ring
+                                        global-mark-ring
+                                        search-ring
+                                        regexp-search-ring
+                                        extended-command-history)
+        savehist-autosave-interval 60)
+  (add-hook 'after-init-hook #'savehist-mode))
+
+;; History
+;; Emacsag 25 has a proper mode for `save-place'
+(add-hook 'after-init-hook #'save-place-mode)
  
 
 (when IS-WIN
@@ -108,10 +156,7 @@ fill-column 80
 ;; Show native line numbers if possible, otherwise use linum
 (if (fboundp 'display-line-numbers-mode)
     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-    ;; (use-package display-line-numbers
-    ;;   :ensure nil
-    ;;   :hook (prog-mode . display-line-numbers-mode))
-  (use-package linum-off
+(use-package linum-off
     :demand
     :defines linum-format
     :hook (after-init . global-linum-mode)
@@ -160,6 +205,39 @@ fill-column 80
 ;; Interactively insert items from kill-ring
 (use-package browse-kill-ring
   :init (add-hook 'after-init-hook #'browse-kill-ring-default-keybindings))
+  
+;; Treat undo history as a tree
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :init (add-hook 'after-init-hook #'global-undo-tree-mode)
+  :config
+  (setq
+   undo-tree-auto-save-history nil
+   undo-tree-history-directory-alist `(("." . ,(concat sea-cache-dir "undo/")))))
+   
+;; Increase selected region by semantic units
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+;; Multiple cursors
+(use-package multiple-cursors
+  :bind (("C-S-c C-S-c"   . mc/edit-lines)
+         ("C->"           . mc/mark-next-like-this)
+         ("C-<"           . mc/mark-previous-like-this)
+         ("C-c C-<"       . mc/mark-all-like-this)
+         ("C-M->"         . mc/skip-to-next-like-this)
+         ("C-M-<"         . mc/skip-to-previous-like-this)
+         ("s-<mouse-1>"   . mc/add-cursor-on-click)
+         ("C-S-<mouse-1>" . mc/add-cursor-on-click)
+         :map mc/keymap
+         ("C-|" . mc/vertical-align-with-space)))
+;; Smartly select region, rectangle, multi cursors
+(use-package smart-region
+  :hook (after-init . smart-region-on))
+  
+;; Move to the beginning/end of line or code
+(use-package mwim
+  :bind (([remap move-beginning-of-line] . mwim-beginning-of-code-or-line)
+         ([remap move-end-of-line] 		 . mwim-end-of-code-or-line)))
   
 (use-package dash
   :ensure t

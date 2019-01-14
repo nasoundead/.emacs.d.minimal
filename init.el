@@ -27,6 +27,13 @@ dependencies or long-term shared data.")
 
 Use this for files that change often, like cache files.")
 
+(defconst sea-gc-max (eval-when-compile (* 500 1024 1024)))
+(defconst sea-gc-min (eval-when-compile (* 200 1024 1024)))
+(defun sea-minibuffer-setup-hook nil (setq gc-cons-threshold sea-gc-max))
+(defun sea-minibuffer-exit-hook nil (setq gc-cons-threshold sea-gc-min))
+(add-hook 'minibuffer-setup-hook #'sea-minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'sea-minibuffer-exit-hook)
+
 (require 'package)
 (setq package-enable-at-startup nil
       package-archives '(("gnu" . "http://elpa.emacs-china.org/gnu/")
@@ -51,6 +58,8 @@ Use this for files that change often, like cache files.")
 (require 'init-ui)
 (require 'init-ivy)
 (require 'init-company)
+(require 'init-projectile)
+(require 'init-util)
 
 
 ;; Start server
