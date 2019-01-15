@@ -30,7 +30,9 @@
 
 ;;; Code:
 (use-package projectile
-  :bind (("s-t" . projectile-find-file))
+  :bind (:map projectile-mode-map
+              ("s-t" . projectile-find-file) ; `cmd-t' or `super-t'
+              ("C-c p" . projectile-command-map))
   :init (add-hook 'after-init-hook #'projectile-mode)
   :config
   (setq projectile-mode-line

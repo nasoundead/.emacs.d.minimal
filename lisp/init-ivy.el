@@ -31,7 +31,6 @@ immediately runs it on the current candidate (ending the ivy session)."
      (setq ivy-exit 'done)
      (exit-minibuffer)))
 
-;;;###autoload
 (defun +ivy/wgrep-occur ()
   "Invoke the search+replace wgrep buffer on the current ag/rg search results."
   (interactive)
@@ -57,20 +56,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         (pop-to-buffer ,buffer)
         (ivy-wgrep-change-to-wgrep-mode)))))
 		
-;;;###autoload
-(defun +ivy-git-grep-other-window-action (x)
-  "Opens the current candidate in another window."
-  (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" x)
-    (select-window
-     (with-ivy-window
-       (let ((file-name   (match-string-no-properties 1 x))
-             (line-number (match-string-no-properties 2 x)))
-         (find-file-other-window (expand-file-name file-name (ivy-state-directory ivy-last)))
-         (goto-char (point-min))
-         (forward-line (1- (string-to-number line-number)))
-         (re-search-forward (ivy--regex ivy-text t) (line-end-position) t)
-         (run-hooks 'counsel-grep-post-action-hook)
-         (selected-window))))))
 
 (use-package ivy
   :config
@@ -129,10 +114,9 @@ immediately runs it on the current candidate (ending the ivy session)."
         counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
         counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
   (general-define-key 
-    :keymap 'counsel-ag-map
+    :keymaps 'counsel-ag-map
 	[backtab] '+ivy/wgrep-occur      ; search/replace on results
 	[tab]     'ivy-call-and-recenter ; preview
-	"M-RET"   '(+ivy-do-action! #'+ivy-git-grep-other-window-action)
 	)
 )
 

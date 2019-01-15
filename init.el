@@ -59,17 +59,19 @@ Use this for files that change often, like cache files.")
 (require 'init-ivy)
 (require 'init-company)
 (require 'init-projectile)
+(require 'init-defun)
 (require 'init-util)
+(require 'init-go)
 
 
 ;; Start server
 (require 'server)
 (unless (server-running-p)
-    (server-start))
-  
+  (server-start))
+
 (dolist (dir (list sea-cache-dir sea-etc-dir))
-        (unless (file-directory-p dir)
-          (make-directory dir t)))
+  (unless (file-directory-p dir)
+    (make-directory dir t)))
 
 ;; Variables configured via the interactive 'customize' interface
 (setq custom-file (concat sea-cache-dir "custom.el"))

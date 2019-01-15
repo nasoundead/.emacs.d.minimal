@@ -173,6 +173,12 @@
        `(linum-highlight-face
          ((t (:inherit 'default :background ,(face-background 'default) :foreground ,(face-foreground 'default)))))))))
 
+(use-package paradox
+  :ensure t
+  :defer t
+  :config
+  (setq paradox-spinner-type 'progress-bar
+        paradox-execute-asynchronously t))
 
 (use-package which-key
   :diminish which-key-mode
@@ -233,11 +239,35 @@
 ;; Smartly select region, rectangle, multi cursors
 (use-package smart-region
   :hook (after-init . smart-region-on))
+
+;; An all-in-one comment command to rule them all
+(use-package comment-dwim-2
+  :bind ("M-;" . comment-dwim-2))
   
 ;; Move to the beginning/end of line or code
 (use-package mwim
   :bind (([remap move-beginning-of-line] . mwim-beginning-of-code-or-line)
          ([remap move-end-of-line] 		 . mwim-end-of-code-or-line)))
+		 
+(use-package session
+  :init
+  (setq session-save-file (expand-file-name ".session" sea-cache-dir))
+  (setq session-name-disable-regexp "\\(?:\\`'/tmp\\|\\.git/[A-Z_]+\\'\\)")
+  (setq session-save-file-coding-system 'utf-8)
+  (add-hook 'after-init-hook 'session-initialize))
+
+;; save a list of open files in ~/.emacs.d/.emacs.desktop
+(setq desktop-path (list sea-cache-dir)
+      desktop-auto-save-timeout 600)
+(desktop-save-mode 1)
+
+(use-package flycheck
+  :diminish flycheck-mode
+  :init (add-hook 'after-init-hook #'global-flycheck-mode)
+  :config
+  (setq flycheck-indication-mode 'right-fringe)
+  (setq flycheck-emacs-lisp-load-path 'inherit)
+  )
   
 (use-package dash
   :ensure t
