@@ -61,6 +61,8 @@ Use this for files that change often, like cache files.")
 (require 'init-projectile)
 (require 'init-defun)
 (require 'init-util)
+(require 'init-lsp)
+(require 'init-rust)
 (require 'init-go)
 
 
