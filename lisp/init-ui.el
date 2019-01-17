@@ -9,8 +9,10 @@
 
 
 (setq custom-safe-themes t)
-(use-package doom-themes)
+(use-package spacemacs-theme)
 (use-package color-theme-sanityinc-tomorrow)
+
+(setq-default custom-enabled-themes '(spacemacs-dark))
 
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()

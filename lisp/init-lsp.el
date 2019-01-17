@@ -31,10 +31,32 @@
 ;;; Code:
 ;;
 ;; 
-(use-package eglot
-  :hook (prog-mode . eglot-ensure)
+; (use-package eglot
+  ; :hook (prog-mode . eglot-ensure)
+  ; :config
+  ; (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point))
+  
+(use-package lsp-mode
+  :ensure t
+  :init (setq lsp-inhibit-message t
+              lsp-eldoc-render-all nil
+              lsp-highlight-symbol-at-point nil))
+
+(use-package company-lsp
+  :after  company
+  :ensure t
   :config
-  (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point))
+  (setq company-lsp-enable-snippet t
+        company-lsp-cache-candidates t))
+
+(use-package lsp-ui
+  :ensure t
+  :config
+  (setq lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-symbol t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-sideline-show-code-actions t
+        lsp-ui-sideline-update-mode 'point))
 
 (provide 'init-lsp)
 

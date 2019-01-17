@@ -53,6 +53,9 @@
  frame-resize-pixelwise t
  kill-ring-max 200
  fill-column 80
+ c-basic-offset   4
+ tab-width 4
+ indent-tabs-mode nil
  save-interprogram-paste-before-kill t)
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -220,10 +223,31 @@
   (setq
    undo-tree-auto-save-history nil
    undo-tree-history-directory-alist `(("." . ,(concat sea-cache-dir "undo/")))))
-   
+
+(use-package pcre2el
+  :commands rxt-quote-pcre)
+
+(use-package smart-forward
+  :commands (smart-up smart-down smart-backward smart-forward))
+
+;; Edit multiple regions in the same way simultaneously
+(use-package iedit
+  :defines desktop-minor-mode-table
+  :bind (("C-;" . iedit-mode)
+         ("C-x r RET" . iedit-rectangle-mode)
+         :map isearch-mode-map ("C-;" . iedit-mode-from-isearch)
+         :map esc-map ("C-;" . iedit-execute-last-modification)
+         :map help-map ("C-;" . iedit-mode-toggle-on-function))
+  :config
+  ;; Avoid restoring `iedit-mode'
+  (with-eval-after-load 'desktop
+    (add-to-list 'desktop-minor-mode-table
+                 '(iedit-mode nil))))
+				 
 ;; Increase selected region by semantic units
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
+  
 ;; Multiple cursors
 (use-package multiple-cursors
   :bind (("C-S-c C-S-c"   . mc/edit-lines)
@@ -243,6 +267,35 @@
 ;; An all-in-one comment command to rule them all
 (use-package comment-dwim-2
   :bind ("M-;" . comment-dwim-2))
+  
+;; Drag stuff (lines, words, region, etc...) around
+(use-package drag-stuff
+  :diminish
+  :commands drag-stuff-define-keys
+  :hook (after-init . drag-stuff-global-mode)
+  :config
+  (add-to-list 'drag-stuff-except-modes 'org-mode)
+  (drag-stuff-define-keys))
+  
+;; Hungry deletion
+(use-package hungry-delete
+  :diminish
+  :hook (after-init . global-hungry-delete-mode)
+  :config (setq-default hungry-delete-chars-to-skip " \t\f\v"))
+
+;; Framework for mode-specific buffer indexes
+(use-package imenu
+  :ensure nil
+  :bind (("C-." . imenu)))
+
+;; Drag stuff (lines, words, region, etc...) around
+(use-package drag-stuff
+  :diminish
+  :commands drag-stuff-define-keys
+  :hook (after-init . drag-stuff-global-mode)
+  :config
+  (add-to-list 'drag-stuff-except-modes 'org-mode)
+  (drag-stuff-define-keys))
   
 ;; Move to the beginning/end of line or code
 (use-package mwim
@@ -266,8 +319,7 @@
   :init (add-hook 'after-init-hook #'global-flycheck-mode)
   :config
   (setq flycheck-indication-mode 'right-fringe)
-  (setq flycheck-emacs-lisp-load-path 'inherit)
-  )
+  (setq flycheck-emacs-lisp-load-path 'inherit))
   
 (use-package dash
   :ensure t
