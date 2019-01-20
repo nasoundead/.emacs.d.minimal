@@ -58,6 +58,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 		
 
 (use-package ivy
+  :diminish
   :config
   (setq
    ivy-wrap t
@@ -89,6 +90,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (use-package swiper :commands (swiper swiper-all))
 (use-package counsel
+  :diminish
   :config
   (counsel-mode 1)
   :init

@@ -63,11 +63,12 @@
 (setq switch-window-auto-resize-window
       (lambda ()
         (equal (buffer-name) "*scratch*"))) ;when return t, run auto switch
-(setq switch-window-default-window-size '(0.8 . 0.6)) ;80% width and 60% height of frame
+;(setq switch-window-default-window-size '(0.8 . 0.6)) ;80% width and 60% height of frame
 (global-set-key (kbd "C-x o") 'switch-window)
 (global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
-(global-set-key (kbd "C-x 2") 'switch-window-then-split-below)
-(global-set-key (kbd "C-x 3") 'switch-window-then-split-right)
+(global-set-key (kbd "C-x 2") 'split-window-horizontally-instead) ;'switch-window-then-split-below
+(global-set-key (kbd "C-x 3") 'split-window-vertically-instead)    ;'switch-window-then-split-right
+(global-set-key (kbd "C-x |") 'split-window)
 (global-set-key (kbd "C-x 0") 'switch-window-then-delete)
 
 (global-set-key (kbd "C-x 4 d") 'switch-window-then-dired)

@@ -67,7 +67,7 @@
       '(
         (?\" . ?\")
         (?\{ . ?\})))
-		
+
 ;; revert buffers for changed files
 (global-auto-revert-mode 1)
 (setq auto-revert-verbose nil)
@@ -78,7 +78,7 @@
       show-paren-when-point-inside-paren t)
 (add-hook 'after-init-hook #'show-paren-mode)
 
- ;; Keep track of recently opened files
+;; Keep track of recently opened files
 (use-package recentf
   :init
   (add-hook 'find-file-hook (lambda ()
@@ -112,7 +112,7 @@
 ;; History
 ;; Emacsag 25 has a proper mode for `save-place'
 (add-hook 'after-init-hook #'save-place-mode)
- 
+
 
 (when IS-WIN
   ;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
@@ -128,11 +128,11 @@
 
 ;; coding
 (defun windows-shell-mode-coding ()
-    (set-buffer-file-coding-system 'gbk)
-    (set-buffer-process-coding-system 'gbk 'gbk))
+  (set-buffer-file-coding-system 'gbk)
+  (set-buffer-process-coding-system 'gbk 'gbk))
 (defun python-encode-in-org-babel-execute (func body params)
-    (let ((coding-system-for-write 'utf-8))
-      (funcall func body params)))
+  (let ((coding-system-for-write 'utf-8))
+    (funcall func body params)))
 (cond
  ((when IS-WIN)
   (set-language-environment "chinese-gbk")
@@ -159,7 +159,7 @@
 ;; Show native line numbers if possible, otherwise use linum
 (if (fboundp 'display-line-numbers-mode)
     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-(use-package linum-off
+  (use-package linum-off
     :demand
     :defines linum-format
     :hook (after-init . global-linum-mode)
@@ -205,7 +205,7 @@
   :init
   (setq display-time-24hr-format t)
   (setq display-time-day-and-date t))
-  
+
 ;; Kill & Mark things easily
 (use-package easy-kill
   :bind (([remap kill-ring-save] . easy-kill)
@@ -214,7 +214,7 @@
 ;; Interactively insert items from kill-ring
 (use-package browse-kill-ring
   :init (add-hook 'after-init-hook #'browse-kill-ring-default-keybindings))
-  
+
 ;; Treat undo history as a tree
 (use-package undo-tree
   :diminish undo-tree-mode
@@ -243,11 +243,11 @@
   (with-eval-after-load 'desktop
     (add-to-list 'desktop-minor-mode-table
                  '(iedit-mode nil))))
-				 
+
 ;; Increase selected region by semantic units
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
-  
+
 ;; Multiple cursors
 (use-package multiple-cursors
   :bind (("C-S-c C-S-c"   . mc/edit-lines)
@@ -267,7 +267,7 @@
 ;; An all-in-one comment command to rule them all
 (use-package comment-dwim-2
   :bind ("M-;" . comment-dwim-2))
-  
+
 ;; Drag stuff (lines, words, region, etc...) around
 (use-package drag-stuff
   :diminish
@@ -276,7 +276,7 @@
   :config
   (add-to-list 'drag-stuff-except-modes 'org-mode)
   (drag-stuff-define-keys))
-  
+
 ;; Hungry deletion
 (use-package hungry-delete
   :diminish
@@ -296,12 +296,12 @@
   :config
   (add-to-list 'drag-stuff-except-modes 'org-mode)
   (drag-stuff-define-keys))
-  
+
 ;; Move to the beginning/end of line or code
 (use-package mwim
   :bind (([remap move-beginning-of-line] . mwim-beginning-of-code-or-line)
-         ([remap move-end-of-line] 		 . mwim-end-of-code-or-line)))
-		 
+         ([remap move-end-of-line]       . mwim-end-of-code-or-line)))
+
 (use-package session
   :init
   (setq session-save-file (expand-file-name ".session" sea-cache-dir))
@@ -320,7 +320,7 @@
   :config
   (setq flycheck-indication-mode 'right-fringe)
   (setq flycheck-emacs-lisp-load-path 'inherit))
-  
+
 (use-package dash
   :ensure t
   :defer t)

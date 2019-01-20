@@ -50,7 +50,7 @@
          ("C-p" . company-select-previous)
          ("C-n" . company-select-next))
   :hook (after-init . global-company-mode)
-  
+
   :config
   (setq company-tooltip-align-annotations t ; aligns annotation to the right
         company-tooltip-limit 12            ; bigger popup window
@@ -64,17 +64,14 @@
   (use-package company-box
     :if EMACS26+
     :diminish
-	:functions (all-the-icons-faicon
+    :functions (all-the-icons-faicon
                 all-the-icons-material
                 all-the-icons-octicon
                 all-the-icons-alltheicon)
     :hook (company-mode . company-box-mode)
-	; :init 
-	; (add-hook 'company-box-mode
-              ; (lambda () (message (all-the-icons-wicon "tornado"))))
     :config
-	;(setq company-box-backends-colors nil)
-	(setq company-box-icons-unknown 'fa_question_circle)
+    ;(setq company-box-backends-colors nil)
+    (setq company-box-icons-unknown 'fa_question_circle)
     (with-eval-after-load 'all-the-icons
         (setq company-box-icons-unknown
               (all-the-icons-octicon "file-text" :v-adjust -0.05))
@@ -86,7 +83,7 @@
                (all-the-icons-faicon "cog" :v-adjust -0.0575)         ; Feature
                (all-the-icons-material "palette" :v-adjust -0.2)      ; Face
                ))
-			   
+
 
         (setq company-box-icons-yasnippet
               (all-the-icons-faicon "code" :v-adjust -0.0575))       ; Snippet
