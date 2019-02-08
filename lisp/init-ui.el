@@ -7,13 +7,24 @@
                  "%b"))))
 (setq icon-title-format frame-title-format)
 
+(defvar sea-init-ui-hook nil
+  "ui hook")
+(defun sea/init-ui (&optional frame)
+  "Set the theme and load the font, in that order."
+  (reapply-themes)
+  (set-face-attribute 'default nil :font "Inconsolata 12")
+  (set-fontset-font "fontset-default" 'chinese-gbk "宋体")
+  (setq face-font-rescale-alist '(("宋体" . 1.0)
+                ("微软雅黑" . 1.0)
+                ))
+  (require 'font-lock+)
+  (run-hooks 'sea-init-ui-hook))
+(add-hook 'after-init-hook #'sea/init-ui)
 
 (setq custom-safe-themes t)
 (use-package spacemacs-theme)
 (use-package color-theme-sanityinc-tomorrow)
-
 (setq-default custom-enabled-themes '(spacemacs-dark))
-
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()
   "Forcibly load the themes listed in `custom-enabled-themes'."
@@ -23,7 +34,6 @@
   (custom-set-variables `(custom-enabled-themes (quote ,custom-enabled-themes))))
 
 ;(add-hook 'after-init-hook 'reapply-themes)
-
 (defun sanityinc-light ()
   "Activate a light color theme."
   (interactive)
@@ -55,31 +65,6 @@
                                 "*Ibuffer*"
                                 "*esh command on file*")))
 
-(use-package switch-window
-:init
-(setq switch-window-shortcut-style 'qwerty)
-(setq switch-window-threshold 2)
-(setq switch-window-minibuffer-shortcut ?z)
-(setq switch-window-auto-resize-window
-      (lambda ()
-        (equal (buffer-name) "*scratch*"))) ;when return t, run auto switch
-;(setq switch-window-default-window-size '(0.8 . 0.6)) ;80% width and 60% height of frame
-(global-set-key (kbd "C-x o") 'switch-window)
-(global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
-(global-set-key (kbd "C-x 2") 'split-window-horizontally-instead) ;'switch-window-then-split-below
-(global-set-key (kbd "C-x 3") 'split-window-vertically-instead)    ;'switch-window-then-split-right
-(global-set-key (kbd "C-x |") 'split-window)
-(global-set-key (kbd "C-x 0") 'switch-window-then-delete)
-
-(global-set-key (kbd "C-x 4 d") 'switch-window-then-dired)
-(global-set-key (kbd "C-x 4 f") 'switch-window-then-find-file)
-(global-set-key (kbd "C-x 4 m") 'switch-window-then-compose-mail)
-(global-set-key (kbd "C-x 4 r") 'switch-window-then-find-file-read-only)
-
-(global-set-key (kbd "C-x 4 C-f") 'switch-window-then-find-file)
-(global-set-key (kbd "C-x 4 C-o") 'switch-window-then-display-buffer)
-
-(global-set-key (kbd "C-x 4 0") 'switch-window-then-kill-buffer))
 
 (use-package windmove
   :ensure nil
@@ -99,20 +84,6 @@
                 all-the-icons-wicon all-the-icons-alltheicon))
     (advice-add fn :around #'sea*disable-all-the-icons-in-tty)))
 
-(defvar sea-init-ui-hook nil
-  "ui hook")
-(defun sea/init-ui (&optional frame)
-  "Set the theme and load the font, in that order."
-  (reapply-themes)
-  (set-face-attribute 'default nil :font "Inconsolata 12")
-  (set-fontset-font "fontset-default" 'chinese-gbk "宋体")
-  (setq face-font-rescale-alist '(("宋体" . 1.0)
-                ("微软雅黑" . 1.0)
-                ))
-  (require 'font-lock+)
-  (run-hooks 'sea-init-ui-hook))
-(add-hook 'after-init-hook #'sea/init-ui)
-
 ;; For Windows
 (when IS-WIN
   (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
@@ -131,6 +102,90 @@
           . hide-mode-line-mode)))
 
 
-	 
+;; Make "C-x o" prompt for a target window when there are more than 2
+(use-package switch-window)
+(setq-default switch-window-shortcut-style 'alphabet)
+(setq-default switch-window-timeout nil)
+(global-set-key (kbd "C-x o") 'switch-window)
+
+
+;;----------------------------------------------------------------------------
+;; When splitting window, show (other-buffer) in the new window
+;;----------------------------------------------------------------------------
+(defun split-window-func-with-other-buffer (split-function)
+  (lambda (&optional arg)
+    "Split this window and switch to the new window unless ARG is provided."
+    (interactive "P")
+    (funcall split-function)
+    (let ((target-window (next-window)))
+      (set-window-buffer target-window (other-buffer))
+      (unless arg
+        (select-window target-window)))))
+
+(global-set-key (kbd "C-x 2") (split-window-func-with-other-buffer 'split-window-vertically))
+(global-set-key (kbd "C-x 3") (split-window-func-with-other-buffer 'split-window-horizontally))
+
+(defun sanityinc/toggle-delete-other-windows ()
+  "Delete other windows in frame if any, or restore previous window config."
+  (interactive)
+  (if (and winner-mode
+           (equal (selected-window) (next-window)))
+      (winner-undo)
+    (delete-other-windows)))
+
+(global-set-key (kbd "C-x 1") 'sanityinc/toggle-delete-other-windows)
+
+;;----------------------------------------------------------------------------
+;; Rearrange split windows
+;;----------------------------------------------------------------------------
+(defun split-window-horizontally-instead ()
+  "Kill any other windows and re-split such that the current window is on the top half of the frame."
+  (interactive)
+  (let ((other-buffer (and (next-window) (window-buffer (next-window)))))
+    (delete-other-windows)
+    (split-window-horizontally)
+    (when other-buffer
+      (set-window-buffer (next-window) other-buffer))))
+
+(defun split-window-vertically-instead ()
+  "Kill any other windows and re-split such that the current window is on the left half of the frame."
+  (interactive)
+  (let ((other-buffer (and (next-window) (window-buffer (next-window)))))
+    (delete-other-windows)
+    (split-window-vertically)
+    (when other-buffer
+      (set-window-buffer (next-window) other-buffer))))
+
+(global-set-key (kbd "C-x |") 'split-window-horizontally-instead)
+(global-set-key (kbd "C-x _") 'split-window-vertically-instead)
+
+
+;; Borrowed from http://postmomentum.ch/blog/201304/blog-on-emacs
+(defun sanityinc/split-window()
+  "Split the window to see the most recent buffer in the other window.
+Call a second time to restore the original window configuration."
+  (interactive)
+  (if (eq last-command 'sanityinc/split-window)
+      (progn
+        (jump-to-register :sanityinc/split-window)
+        (setq this-command 'sanityinc/unsplit-window))
+    (window-configuration-to-register :sanityinc/split-window)
+    (switch-to-buffer-other-window nil)))
+
+(global-set-key (kbd "<f7>") 'sanityinc/split-window)
+
+
+
+(defun sanityinc/toggle-current-window-dedication ()
+  "Toggle whether the current window is dedicated to its current buffer."
+  (interactive)
+  (let* ((window (selected-window))
+         (was-dedicated (window-dedicated-p window)))
+    (set-window-dedicated-p window (not was-dedicated))
+    (message "Window %sdedicated to %s"
+             (if was-dedicated "no longer " "")
+             (buffer-name))))
+
+(global-set-key (kbd "C-c <down>") 'sanityinc/toggle-current-window-dedication)	 
   
 (provide 'init-ui)

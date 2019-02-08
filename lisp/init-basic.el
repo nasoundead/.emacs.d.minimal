@@ -218,6 +218,9 @@
 ;; Treat undo history as a tree
 (use-package undo-tree
   :diminish undo-tree-mode
+  :ensure quelpa
+  :quelpa (undo-tree :fetcher git :url "http://www.dr-qubit.org/git/undo-tree.git")
+  :defer t
   :init (add-hook 'after-init-hook #'global-undo-tree-mode)
   :config
   (setq
@@ -227,8 +230,6 @@
 (use-package pcre2el
   :commands rxt-quote-pcre)
 
-(use-package smart-forward
-  :commands (smart-up smart-down smart-backward smart-forward))
 
 ;; Edit multiple regions in the same way simultaneously
 (use-package iedit
@@ -315,11 +316,12 @@
 (desktop-save-mode 1)
 
 (use-package flycheck
-  :diminish flycheck-mode
-  :init (add-hook 'after-init-hook #'global-flycheck-mode)
+  ;; :init (add-hook 'after-init-hook #'global-flycheck-mode)
   :config
-  (setq flycheck-indication-mode 'right-fringe)
-  (setq flycheck-emacs-lisp-load-path 'inherit))
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+  ;; (setq flycheck-indication-mode 'right-fringe)
+  ;; (setq flycheck-emacs-lisp-load-path 'inherit)
+  )
 
 (use-package dash
   :ensure t
