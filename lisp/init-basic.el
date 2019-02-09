@@ -101,6 +101,7 @@
   :init
   (setq enable-recursive-minibuffers t ; Allow commands in minibuffers
         history-length 1000
+		savehist-file (concat sea-cache-dir "history")
         savehist-additional-variables '(mark-ring
                                         global-mark-ring
                                         search-ring
@@ -111,7 +112,8 @@
 
 ;; History
 ;; Emacsag 25 has a proper mode for `save-place'
-(add-hook 'after-init-hook #'save-place-mode)
+(setq save-place-file (concat sea-cache-dir "places"))
+(save-place-mode 1)
 
 
 (when IS-WIN
@@ -127,25 +129,25 @@
   )
 
 ;; coding
-(defun windows-shell-mode-coding ()
-  (set-buffer-file-coding-system 'gbk)
-  (set-buffer-process-coding-system 'gbk 'gbk))
-(defun python-encode-in-org-babel-execute (func body params)
-  (let ((coding-system-for-write 'utf-8))
-    (funcall func body params)))
-(cond
- ((when IS-WIN)
-  (set-language-environment "chinese-gbk")
-  (prefer-coding-system 'utf-8)
-  (set-terminal-coding-system 'gbk)
-  (modify-coding-system-alist 'process "*" 'gbk)
-  (add-hook 'shell-mode-hook #'windows-shell-mode-coding)
-  (add-hook 'inferior-python-mode-hook #'windows-shell-mode-coding)
-  (advice-add #'org-babel-execute:python :around
-              #'python-encode-in-org-babel-execute))
- (t
-  (set-language-environment "UTF-8")
-  (prefer-coding-system 'utf-8)))
+; (defun windows-shell-mode-coding ()
+  ; (set-buffer-file-coding-system 'gbk)
+  ; (set-buffer-process-coding-system 'gbk 'gbk))
+; (defun python-encode-in-org-babel-execute (func body params)
+  ; (let ((coding-system-for-write 'utf-8))
+    ; (funcall func body params)))
+; (cond
+ ; ((when IS-WIN)
+  ; (set-language-environment "chinese-gbk")
+  ; (prefer-coding-system 'utf-8)
+  ; (set-terminal-coding-system 'gbk)
+  ; (modify-coding-system-alist 'process "*" 'gbk)
+  ; (add-hook 'shell-mode-hook #'windows-shell-mode-coding)
+  ; (add-hook 'inferior-python-mode-hook #'windows-shell-mode-coding)
+  ; (advice-add #'org-babel-execute:python :around
+              ; #'python-encode-in-org-babel-execute))
+ ; (t
+  ; (set-language-environment "UTF-8")
+  ; (prefer-coding-system 'utf-8)))
 
 ;; Environment
 (when (or IS-MAC IS-LINUX)
@@ -218,9 +220,9 @@
 ;; Treat undo history as a tree
 (use-package undo-tree
   :diminish undo-tree-mode
-  :ensure quelpa
-  :quelpa (undo-tree :fetcher git :url "http://www.dr-qubit.org/git/undo-tree.git")
-  :defer t
+  ; :ensure quelpa
+  ; :quelpa (undo-tree :fetcher git :url "http://www.dr-qubit.org/git/undo-tree.git")
+  ; :defer t
   :init (add-hook 'after-init-hook #'global-undo-tree-mode)
   :config
   (setq
@@ -322,6 +324,11 @@
   ;; (setq flycheck-indication-mode 'right-fringe)
   ;; (setq flycheck-emacs-lisp-load-path 'inherit)
   )
+
+(use-package aggressive-indent-mode
+  :init
+  (dolist (hook '(emacs-lisp-mode-hook css-mode-hook))
+                (add-hook hook #'aggressive-indent-mode)))
 
 (use-package dash
   :ensure t

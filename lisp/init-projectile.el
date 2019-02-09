@@ -31,12 +31,12 @@
 ;;; Code:
 (use-package projectile
   :bind (:map projectile-mode-map
-              ("s-t" . projectile-find-file) ; `cmd-t' or `super-t'
               ("C-c p" . projectile-command-map))
   :init (add-hook 'after-init-hook #'projectile-mode)
   :config
-  (setq projectile-mode-line
-        '(:eval (format "[%s]" (projectile-project-name))))
+  ;; (setq projectile-mode-line
+  ;;       '(:eval (format "[%s]" (projectile-project-name))))
+  (setq-default projectile-mode-line-prefix " Proj")
 
   (setq projectile-known-projects-file
         (expand-file-name "projectile-bookmarks.eld" sea-cache-dir))
@@ -48,7 +48,7 @@
 
   (setq projectile-switch-project-action
         '(lambda ()
-		   (ignore-errors 
+           (ignore-errors
              (venv-projectile-auto-workon))
            (projectile-find-file)))
 

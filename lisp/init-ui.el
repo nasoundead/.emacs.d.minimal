@@ -12,11 +12,22 @@
 (defun sea/init-ui (&optional frame)
   "Set the theme and load the font, in that order."
   (reapply-themes)
+  ;; ============================================================
+  ;; Setting English Font
+  ;; (set-face-attribute 'default nil :font "DejaVu Sans Mono 11")
   (set-face-attribute 'default nil :font "Inconsolata 12")
-  (set-fontset-font "fontset-default" 'chinese-gbk "宋体")
+  ;; Setting Chinese Font
+  (dolist (charset '(kana han symbol cjk-misc bopomofo))
+    (set-fontset-font (frame-parameter nil 'font)
+                      charset
+                      (font-spec :family "Microsoft Yahei" :size 14)))
+
+                                        ;(set-face-attribute 'default nil :font "Inconsolata 12")
+                                        ;(set-fontset-font "fontset-default" 'chinese-gbk "宋体")
   (setq face-font-rescale-alist '(("宋体" . 1.0)
-                ("微软雅黑" . 1.0)
-                ))
+                                  ("微软雅黑" . 1.0)
+                                  ("Microsoft Yahei" . 1.0)
+                                  ))
   (require 'font-lock+)
   (run-hooks 'sea-init-ui-hook))
 (add-hook 'after-init-hook #'sea/init-ui)
@@ -33,7 +44,7 @@
       (load-theme theme)))
   (custom-set-variables `(custom-enabled-themes (quote ,custom-enabled-themes))))
 
-;(add-hook 'after-init-hook 'reapply-themes)
+                                        ;(add-hook 'after-init-hook 'reapply-themes)
 (defun sanityinc-light ()
   "Activate a light color theme."
   (interactive)
@@ -70,7 +81,7 @@
   :ensure nil
   :init (add-hook 'sea-init-ui-hook #'windmove-default-keybindings))
 
-;; icons		  
+;; icons
 (use-package all-the-icons
   :init
   (require 'all-the-icons)
@@ -80,20 +91,20 @@
   (setq inhibit-compacting-font-caches t)
   ;; all-the-icons doesn't work in the terminal, so we "disable" it.
   (dolist (fn '(all-the-icons-octicon all-the-icons-material
-                all-the-icons-faicon all-the-icons-fileicon
-                all-the-icons-wicon all-the-icons-alltheicon))
+                                      all-the-icons-faicon all-the-icons-fileicon
+                                      all-the-icons-wicon all-the-icons-alltheicon))
     (advice-add fn :around #'sea*disable-all-the-icons-in-tty)))
 
 ;; For Windows
 (when IS-WIN
   (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
-  (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)) 
+  (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease))
 (when IS-LINUX
-;; For Linux
+  ;; For Linux
   (global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
   (global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease))
 
-;; Mode-line	 
+;; Mode-line
 (use-package hide-mode-line
   :hook (((completion-list-mode
            completion-in-region-mode
@@ -186,6 +197,6 @@ Call a second time to restore the original window configuration."
              (if was-dedicated "no longer " "")
              (buffer-name))))
 
-(global-set-key (kbd "C-c <down>") 'sanityinc/toggle-current-window-dedication)	 
-  
+(global-set-key (kbd "C-c <down>") 'sanityinc/toggle-current-window-dedication)
+
 (provide 'init-ui)

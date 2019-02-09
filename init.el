@@ -47,22 +47,34 @@ Use this for files that change often, like cache files.")
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-(require 'use-package)
+(unless (package-installed-p 'quelpa)
+  (package-refresh-contents)
+  (package-install 'quelpa))
+(setq quelpa-update-melpa-p nil)
+(require 'quelpa)
 (setq use-package-always-ensure t)
 (setq use-package-ensure-function 'quelpa)
 (setq use-package-always-defer t)
 (use-package diminish)
 (use-package general)
+
 (quelpa
  '(quelpa-use-package
    :fetcher git
    :url "https://framagit.org/steckerhalter/quelpa-use-package.git"))
+
 (require 'quelpa-use-package)
+; (use-package quelpa-use-package
+    ; :ensure t
+    ; :init
+    ; (setq quelpa-update-melpa-p nil))
+
 
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 (add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
 (require 'init-basic)
+(require 'init-locales)
 (require 'init-defun)
 (require 'init-ui)
 (require 'init-treemacs)
