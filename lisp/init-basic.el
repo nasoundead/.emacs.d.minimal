@@ -4,8 +4,8 @@
 (setq-default
  inhibit-startup-message t
  gnus-inhibit-startup-message t
- auto-save-mode nil
- make-backup-files nil
+ ;auto-save-mode nil
+ ;make-backup-files nil
  indent-tabs-mode nil
  ansi-color-for-comint-mode t
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
@@ -68,6 +68,12 @@
         (?\" . ?\")
         (?\{ . ?\})))
 
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
 ;; revert buffers for changed files
 (global-auto-revert-mode 1)
 (setq auto-revert-verbose nil)
@@ -101,7 +107,7 @@
   :init
   (setq enable-recursive-minibuffers t ; Allow commands in minibuffers
         history-length 1000
-		savehist-file (concat sea-cache-dir "history")
+        savehist-file (concat sea-cache-dir "history")
         savehist-additional-variables '(mark-ring
                                         global-mark-ring
                                         search-ring
@@ -325,10 +331,10 @@
   ;; (setq flycheck-emacs-lisp-load-path 'inherit)
   )
 
-(use-package aggressive-indent-mode
+(use-package aggressive-indent
   :init
   (dolist (hook '(emacs-lisp-mode-hook css-mode-hook))
-                (add-hook hook #'aggressive-indent-mode)))
+    (add-hook hook #'aggressive-indent-mode)))
 
 (use-package dash
   :ensure t
