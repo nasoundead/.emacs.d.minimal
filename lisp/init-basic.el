@@ -226,14 +226,40 @@
 ;; Treat undo history as a tree
 (use-package undo-tree
   :diminish undo-tree-mode
-  ; :ensure quelpa
-  ; :quelpa (undo-tree :fetcher git :url "http://www.dr-qubit.org/git/undo-tree.git")
-  ; :defer t
+  ;; :ensure quelpa
+  ;; :quelpa (undo-tree :fetcher git :url "http://www.dr-qubit.org/git/undo-tree.git")
+  ;; :defer t
   :init (add-hook 'after-init-hook #'global-undo-tree-mode)
   :config
   (setq
    undo-tree-auto-save-history nil
    undo-tree-history-directory-alist `(("." . ,(concat sea-cache-dir "undo/")))))
+
+(use-package crux
+  :init
+  (global-set-key (kbd "C-c o") #'crux-open-with)
+  (global-set-key (kbd "C-c d") #'crux-duplicate-current-line-or-region)
+  (global-set-key (kbd "C-c M-d") #'crux-duplicate-and-comment-current-line-or-region)
+  (global-set-key (kbd "C-c D") #'crux-delete-file-and-buffer)
+  (global-set-key [(control shift return)] #'crux-smart-open-line-above)
+  (global-set-key [(shift return)] #'crux-smart-open-line)
+  (global-set-key (kbd "C-c f") #'crux-recentf-find-file)
+  (global-set-key (kbd "C-c k") #'crux-kill-other-buffers)
+  (global-set-key (kbd "C-c r") #'crux-rename-buffer-and-file)
+  (global-set-key (kbd "C-c i") #'crux-ispell-word-then-abbrev)
+  (global-set-key (kbd "C-^") #'crux-top-join-line)
+  (global-set-key (kbd "C-x C-u") #'crux-upcase-region)
+  (global-set-key (kbd "C-x C-l") #'crux-downcase-region)
+  (global-set-key (kbd "C-x M-c") #'crux-downcase-region)
+  (global-set-key (kbd "C-<backspace>") #'crux-kill-line-backwards)
+  (global-set-key [remap kill-whole-line] #'crux-kill-whole-line)
+  (setq save-abbrevs 'silently)
+  (setq-default abbrev-mode t)
+  :config
+  (crux-with-region-or-buffer indent-region)
+  (crux-with-region-or-buffer untabify)
+  (crux-with-region-or-line comment-or-uncomment-region)
+  (crux-with-region-or-point-to-eol kill-ring-save))
 
 (use-package pcre2el
   :commands rxt-quote-pcre)

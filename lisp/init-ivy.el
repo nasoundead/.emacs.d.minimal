@@ -55,7 +55,7 @@ immediately runs it on the current candidate (ending the ivy session)."
      `(lambda (_)
         (pop-to-buffer ,buffer)
         (ivy-wgrep-change-to-wgrep-mode)))))
-		
+
 
 (use-package ivy
   :diminish
@@ -65,8 +65,8 @@ immediately runs it on the current candidate (ending the ivy session)."
    projectile-completion-system 'ivy
    smex-completion-method 'ivy
    ivy-fixed-height-minibuffer t
-   ; don't use ^ as initial input
-   ivy-initial-inputs-alist nil 
+                                        ; don't use ^ as initial input
+   ivy-initial-inputs-alist nil
    ivy-format-function #'ivy-format-function-line
    ;; disable magic slash on non-match
    ivy-magic-slash-non-match-action nil
@@ -78,36 +78,40 @@ immediately runs it on the current candidate (ending the ivy session)."
    ivy-on-del-error-function nil
    ;; enable ability to select prompt (alternative to `ivy-immediate-done')
    ivy-use-selectable-prompt t)
-   
+
   (ivy-mode)
   (general-define-key
-   "<S-return>" #'ivy-switch-buffer
    "<C-return>" #'ivy-switch-buffer
    "C-c C-p"    #'counsel-yank-pop
    "C-c C-m"    #'counsel-mark-ring
    "C-c C-r"    #'ivy-resume)
   )
 
-(use-package swiper :commands (swiper swiper-all))
+(use-package swiper
+  :commands (swiper swiper-all)
+  :bind
+  (("C-s" . swiper)
+   ("C-S-s". swiper-all)
+   ("C-M-s" . isearch-forward)))
 (use-package counsel
   :diminish
   :config
   (counsel-mode 1)
   :init
   (general-define-key
-    [remap apropos]                  #'counsel-apropos
-    [remap bookmark-jump]            #'counsel-bookmark
-    [remap describe-face]            #'counsel-describe-face
-    [remap describe-function]        #'counsel-describe-function
-    [remap describe-variable]        #'counsel-describe-variable
-    [remap execute-extended-command] #'counsel-M-x
-    [remap find-file]                #'counsel-find-file
-    [remap find-library]             #'counsel-find-library
-    [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
-    [remap imenu]                    #'counsel-imenu
-    [remap recentf-open-files]       #'counsel-recentf
-    [remap org-capture]              #'counsel-org-capture
-    [remap swiper]                   #'counsel-grep-or-swiper)
+   [remap apropos]                  #'counsel-apropos
+   [remap bookmark-jump]            #'counsel-bookmark
+   [remap describe-face]            #'counsel-describe-face
+   [remap describe-function]        #'counsel-describe-function
+   [remap describe-variable]        #'counsel-describe-variable
+   [remap execute-extended-command] #'counsel-M-x
+   [remap find-file]                #'counsel-find-file
+   [remap find-library]             #'counsel-find-library
+   [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
+   [remap imenu]                    #'counsel-imenu
+   [remap recentf-open-files]       #'counsel-recentf
+   [remap org-capture]              #'counsel-org-capture
+   [remap swiper]                   #'counsel-grep-or-swiper)
   :config
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
         ;; Add smart-casing and compressed archive searching (-zS) to default
@@ -115,12 +119,12 @@ immediately runs it on the current candidate (ending the ivy session)."
         counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
         counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
         counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
-  (general-define-key 
-    :keymaps 'counsel-ag-map
-	[backtab] '+ivy/wgrep-occur      ; search/replace on results
-	[tab]     'ivy-call-and-recenter ; preview
-	)
-)
+  (general-define-key
+   :keymaps 'counsel-ag-map
+   [backtab] '+ivy/wgrep-occur      ; search/replace on results
+   [tab]     'ivy-call-and-recenter ; preview
+   )
+  )
 
 
 (use-package wgrep
@@ -136,7 +140,7 @@ immediately runs it on the current candidate (ending the ivy session)."
           (swiper . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist nil))
-		
+
 ;; Used by `counsel-M-x'
 (use-package amx
   :config (setq amx-save-file (concat sea-cache-dir "amx-items")))
