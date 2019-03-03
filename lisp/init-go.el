@@ -92,13 +92,17 @@
 
   (use-package go-guru
     :bind (:map go-mode-map
-                ;; ([remap xref-find-definitions] . go-guru-definition)
+                ([remap xref-find-definitions] . go-guru-definition)
                 ([remap xref-find-references] . go-guru-referrers)))
 
   (with-eval-after-load 'company
     (use-package company-go
       :defines company-backends
-      :init (cl-pushnew 'company-go company-backends))))
+      ;; :init (cl-pushnew 'company-go company-backends)
+      :hook
+      (go-mode . (lambda () (add-to-list (make-local-variable 'company-backends)
+                                         '(company-go :with company-capf))))
+      )))
 
 ;; Local Golang playground for short snippes
 (use-package go-playground

@@ -245,6 +245,7 @@
   (global-set-key [(shift return)] #'crux-smart-open-line)
   (global-set-key (kbd "C-c f") #'crux-recentf-find-file)
   (global-set-key (kbd "C-c k") #'crux-kill-other-buffers)
+  (global-set-key (kbd "C-c c" #'crux-cleanup-buffer-or-region))
   (global-set-key (kbd "C-c r") #'crux-rename-buffer-and-file)
   (global-set-key (kbd "C-c i") #'crux-ispell-word-then-abbrev)
   (global-set-key (kbd "C-^") #'crux-top-join-line)

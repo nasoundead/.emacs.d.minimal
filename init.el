@@ -37,12 +37,12 @@ Use this for files that change often, like cache files.")
 (require 'package)
 (setq package-enable-at-startup nil
       package-archives '(("gnu" . "http://elpa.emacs-china.org/gnu/")
-			 ("melpa" . "http://elpa.emacs-china.org/melpa-stable/")
-			 ("melpa-stable" . "http://elpa.emacs-china.org/melpa/")
-			 ("org" . "http://elpa.emacs-china.org/org/")
-			 ("sunrise-commander" . "http://elpa.emacs-china.org/sunrise-commander/")
-			 ("user42" . "http://elpa.emacs-china.org/user42/")
-			 ))
+                         ("melpa" . "http://elpa.emacs-china.org/melpa-stable/")
+                         ("melpa-stable" . "http://elpa.emacs-china.org/melpa/")
+                         ("org" . "http://elpa.emacs-china.org/org/")
+                         ("sunrise-commander" . "http://elpa.emacs-china.org/sunrise-commander/")
+                         ("user42" . "http://elpa.emacs-china.org/user42/")
+                         ))
 (package-initialize)
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -64,12 +64,10 @@ Use this for files that change often, like cache files.")
    :url "https://framagit.org/steckerhalter/quelpa-use-package.git"))
 
 (require 'quelpa-use-package)
-; (use-package quelpa-use-package
-    ; :ensure t
-    ; :init
-    ; (setq quelpa-update-melpa-p nil))
-
-
+;; (use-package quelpa-use-package
+;;   :ensure t
+;;   :init
+;;   (setq quelpa-update-melpa-p nil))
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 (add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
@@ -78,8 +76,8 @@ Use this for files that change often, like cache files.")
 (require 'init-defun)
 (require 'init-ui)
 (require 'init-treemacs)
-;(require 'init-neotree)
-;(require 'init-modeline)
+;; (require 'init-neotree)
+;; (require 'init-modeline)
 (require 'init-highlight)
 (require 'init-ivy)
 (require 'init-company)
@@ -88,7 +86,7 @@ Use this for files that change often, like cache files.")
 (require 'init-lsp)
 (require 'init-rust)
 (require 'init-go)
-
+(require 'init-python)
 
 ;; Start server
 (require 'server)
