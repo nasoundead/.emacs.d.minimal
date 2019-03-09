@@ -12,7 +12,7 @@
 (defun sea/init-ui (&optional frame)
   "Set the theme and load the font, in that order."
   (reapply-themes)
-  (set-face-attribute 'default nil :family "Iosevka" :height 130)
+  (set-face-attribute 'default nil :family "Iosevka" :height 120)
   (set-face-attribute 'fixed-pitch nil :family "Iosevka")
   (set-face-attribute 'variable-pitch nil :family "Baskerville")
   (add-hook 'text-mode-hook
@@ -29,7 +29,6 @@
   ;;                     charset
   ;;                     (font-spec :family "Microsoft Yahei" :size 14)))
 
-  ;; (set-face-attribute 'default nil :font "Inconsolata 12")
   ;; (set-fontset-font "fontset-default" 'chinese-gbk "宋体")
   ;; (setq face-font-rescale-alist '(("宋体" . 1.0)
   ;;                                 ("微软雅黑" . 1.0)
@@ -42,8 +41,8 @@
 (setq custom-safe-themes t)
 (use-package spacemacs-theme)
 (use-package color-theme-sanityinc-tomorrow)
-(use-package poet-theme)
-(setq-default custom-enabled-themes '(poet-theme))
+;; (use-package poet-theme)
+;; (setq-default custom-enabled-themes '(poet-theme))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()
