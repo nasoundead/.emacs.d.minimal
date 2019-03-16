@@ -72,6 +72,5 @@
     (if (fboundp 'async-byte-recompile-directory)
         (async-byte-recompile-directory dir)
       (byte-recompile-directory dir 0 t))))
-	  
 
 (provide 'init-defun)

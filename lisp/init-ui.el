@@ -101,6 +101,13 @@
   :ensure nil
   :init (add-hook 'sea-init-ui-hook #'windmove-default-keybindings))
 
+;; (use-package page-break-lines
+;;   :init
+;;   (global-page-break-lines-mode)
+;;   (set-fontset-font "fontset-default"
+;;                     (cons page-break-lines-char page-break-lines-char)
+;;                     (face-attribute 'default :family)))
+
 ;; icons
 (use-package all-the-icons
   :init
