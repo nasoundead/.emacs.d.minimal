@@ -32,36 +32,36 @@
 (use-package neotree
   :pin melpa-stable
   :init
-  ; (setq neo-create-file-auto-open nil
-        ; neo-auto-indent-point nil
-        ; neo-autorefresh nil
-        ; neo-mode-line-type 'none
-        ; neo-window-width 28
-        ; neo-show-updir-line nil
-        ; neo-theme 'nerd ; fallback
-        ; neo-banner-message nil
-        ; neo-confirm-create-file #'off-p
-        ; neo-confirm-create-directory #'off-p
-        ; neo-show-hidden-files nil
-        ; neo-keymap-style 'concise
-        ; neo-show-hidden-files t
-        ; neo-hidden-regexp-list
-        ; '(;; vcs folders
-          ; "^\\.\\(?:git\\|hg\\|svn\\)$"
-          ; ;; compiled files
-          ; "\\.\\(?:pyc\\|o\\|elc\\|lock\\|css.map\\|class\\)$"
-          ; ;; generated files, caches or local pkgs
-          ; "^\\(?:node_modules\\|vendor\\|.\\(project\\|cask\\|yardoc\\|sass-cache\\)\\)$"
-          ; ;; org-mode folders
-          ; "^\\.\\(?:sync\\|export\\|attach\\)$"
-          ; ;; temp files
-          ; "~$"
-          ; "^#.*#$"))
+  (setq neo-create-file-auto-open nil
+        neo-auto-indent-point nil
+        neo-autorefresh nil
+        neo-mode-line-type 'none
+        neo-window-width 28
+        neo-show-updir-line nil
+        neo-theme (if (display-graphic-p) 'icons 'arrow)
+        neo-banner-message nil
+        neo-confirm-create-file #'off-p
+        neo-confirm-create-directory #'off-p
+        neo-show-hidden-files nil
+        neo-keymap-style 'concise
+        neo-show-hidden-files t
+        neo-hidden-regexp-list
+        '(;; vcs folders
+          "^\\.\\(?:git\\|hg\\|svn\\)$"
+          ;; compiled files
+          "\\.\\(?:pyc\\|o\\|elc\\|lock\\|css.map\\|class\\)$"
+          ;; generated files, caches or local pkgs
+          "^\\(?:node_modules\\|vendor\\|.\\(project\\|cask\\|yardoc\\|sass-cache\\)\\)$"
+          ;; org-mode folders
+          "^\\.\\(?:sync\\|export\\|attach\\)$"
+          ;; temp files
+          "~$"
+          "^#.*#$"))
 
-  ; (with-eval-after-load 'winner
-    ; (add-to-list 'winner-boring-buffers neo-buffer-name))
-  ; (with-eval-after-load 'projectile
-    ; (setq projectile-switch-project-action 'neotree-projectile-action))
+  (with-eval-after-load 'winner
+    (add-to-list 'winner-boring-buffers neo-buffer-name))
+  (with-eval-after-load 'projectile
+    (setq projectile-switch-project-action 'neotree-projectile-action))
   )
 
 

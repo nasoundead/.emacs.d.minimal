@@ -131,8 +131,8 @@
       (message "No need to clean"))))
 
 ;; Calendar / Agenda
-(use-package org-agenda
-  :after (hydra org)
+(use-package org
+  :after (hydra)
   :config
 
   ;; Todo part
@@ -285,7 +285,7 @@
           (:auto-category t)
           )))
 
-(use-package org-capture
+(use-package org
   :config
 
   ;; Capture
@@ -482,7 +482,7 @@ _h_: html          _S_: shell
         org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 
 ;; LaTex
-(use-package ox-latex
+(use-package org
   :after ox
   :defer t
   :config
@@ -491,7 +491,7 @@ _h_: html          _S_: shell
         org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 
 ;; Beamer
-(use-package ox-beamer
+(use-package org
   :after ox
   :config
   (defun my-beamer-bold (contents backend info)
