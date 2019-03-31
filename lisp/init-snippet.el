@@ -2,9 +2,11 @@
 ;; Title
 (use-package yasnippet
   :ensure t
+  :after company
   :config
   ;; Adding yasnippet support to company
-  (add-to-list 'company-backends '(company-yasnippet))
+  (add-to-list 'company-backends 'company-yasnippet)
+  :init
   ;; Activate global
   (yas-global-mode))
 
