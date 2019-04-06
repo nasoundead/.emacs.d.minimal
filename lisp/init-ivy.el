@@ -22,40 +22,6 @@
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 ;;
-(defmacro +ivy-do-action! (action)
-  "Returns an interactive lambda that sets the current ivy action and
-immediately runs it on the current candidate (ending the ivy session)."
-  `(lambda ()
-     (interactive)
-     (ivy-set-action ,action)
-     (setq ivy-exit 'done)
-     (exit-minibuffer)))
-
-(defun +ivy/wgrep-occur ()
-  "Invoke the search+replace wgrep buffer on the current ag/rg search results."
-  (interactive)
-  (unless (window-minibuffer-p)
-    (user-error "No completion session is active"))
-  (require 'wgrep)
-  (let* ((caller (ivy-state-caller ivy-last))
-         (occur-fn (plist-get ivy--occurs-list caller))
-         (buffer
-          (generate-new-buffer
-           (format "*ivy-occur%s \"%s\"*"
-                   (if caller (concat " " (prin1-to-string caller)) "")
-                   ivy-text))))
-    (with-current-buffer buffer
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (funcall occur-fn))
-      (setf (ivy-state-text ivy-last) ivy-text)
-      (setq ivy-occur-last ivy-last)
-      (setq-local ivy--directory ivy--directory))
-    (ivy-exit-with-action
-     `(lambda (_)
-        (pop-to-buffer ,buffer)
-        (ivy-wgrep-change-to-wgrep-mode)))))
-
 
 (use-package ivy
   :diminish

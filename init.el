@@ -58,7 +58,9 @@ Use this for files that change often, like cache files.")
 ;; (setq use-package-ensure-function 'quelpa)
 (setq use-package-always-defer t)
 (use-package diminish)
-(use-package general)
+;; (use-package general)
+(quelpa
+ '(general :fetcher github :repo "noctuid/general.el"))
 
 (quelpa
  '(quelpa-use-package
@@ -74,8 +76,8 @@ Use this for files that change often, like cache files.")
 (require 'init-locales)
 (require 'init-defun)
 (require 'init-ui)
-(require 'init-treemacs)
-;; (require 'init-neotree)
+;; (require 'init-treemacs)
+(require 'init-neotree)
 (require 'init-modeline)
 (require 'init-highlight)
 (require 'init-ivy)

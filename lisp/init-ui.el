@@ -27,13 +27,13 @@
   ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
   ;;   (set-fontset-font (frame-parameter nil 'font)
   ;;                     charset
-  ;;                     (font-spec :family "Microsoft Yahei" :size 14)))
+  ;;                     (font-spec :family "Microsoft Yahei" :size 16)))
 
-  ;; (set-fontset-font "fontset-default" 'chinese-gbk "宋体")
-  ;; (setq face-font-rescale-alist '(("宋体" . 1.0)
-  ;;                                 ("微软雅黑" . 1.0)
-  ;;                                 ("Microsoft Yahei" . 1.0)
-  ;;                                 ))
+  (set-fontset-font "fontset-default" 'chinese-gbk "Microsoft Yahei")
+  (setq face-font-rescale-alist '(("宋体" . 1.0)
+                                  ("微软雅黑" . 1.0)
+                                  ("Microsoft Yahei" . 1.0)
+                                  ))
   (require 'font-lock+)
   (run-hooks 'sea-init-ui-hook))
 (add-hook 'after-init-hook #'sea/init-ui)
@@ -42,6 +42,7 @@
 (use-package spacemacs-theme)
 (use-package color-theme-sanityinc-tomorrow)
 (use-package poet-theme)
+(use-package doom-themes)
 ;; (setq-default custom-enabled-themes '(doom-one))
 ;; (setq-default custom-enabled-themes '(poet-theme))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
@@ -100,13 +101,6 @@
 (use-package windmove
   :ensure nil
   :init (add-hook 'sea-init-ui-hook #'windmove-default-keybindings))
-
-;; (use-package page-break-lines
-;;   :init
-;;   (global-page-break-lines-mode)
-;;   (set-fontset-font "fontset-default"
-;;                     (cons page-break-lines-char page-break-lines-char)
-;;                     (face-attribute 'default :family)))
 
 ;; icons
 (use-package all-the-icons
