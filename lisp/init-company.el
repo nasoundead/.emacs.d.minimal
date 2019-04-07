@@ -64,7 +64,7 @@
   (add-hook 'emacs-lisp-mode-hook
             '(lambda ()
                (require 'company-elisp)
-               (push 'company-elisp company-backends)))
+               (cl-pushnew 'company-elisp company-backends)))
 
   ;; Popup documentation for completion candidates
   (when (and (not EMACS26+) (display-graphic-p))

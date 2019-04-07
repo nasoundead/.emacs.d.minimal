@@ -30,33 +30,57 @@
 
 ;;; Code:
 ;;
-;; 
-; (use-package eglot
-  ; :hook (prog-mode . eglot-ensure)
-  ; :config
-  ; (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point))
-  
+;;
+;; (use-package eglot
+;;   :hook (prog-mode . eglot-ensure)
+;;   :config
+;;   (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point))
+
 (use-package lsp-mode
   :ensure t
-  :init (setq lsp-inhibit-message t
-              lsp-eldoc-render-all nil
-              lsp-highlight-symbol-at-point nil))
+  ;; :hook (prog-mode . lsp)
+  :bind (:map lsp-mode-map
+              ("C-c C-d" . lsp-describe-thing-at-point))
+  :init (setq lsp-prefer-flymake nil
+              lsp-enable-snippet t
+              lsp-auto-guess-root t
+              flymake-fringe-indicator-position 'right-fringe)
+  )
 
-(use-package company-lsp
-  :after  company
-  :ensure t
-  :config
-  (setq company-lsp-enable-snippet t
-        company-lsp-cache-candidates t))
+(use-package company-lsp :commands company-lsp)
+;; (use-package company-lsp
+;;   :after  company
+;;   :ensure t
+;;   :init
+;;   (setq ;; company-lsp-enable-snippet t
+;;    company-lsp-cache-candidates 'auto)
+;;   )
 
 (use-package lsp-ui
   :ensure t
+  :custom-face
+  (lsp-ui-doc-background ((t (:background nil))))
+  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  :bind (:map lsp-ui-mode-map
+              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+              ([remap xref-find-references] . lsp-ui-peek-find-references)
+              ("C-c u" . lsp-ui-imenu))
+  :init
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-header t
+        lsp-ui-doc-include-signature t
+        lsp-ui-doc-position 'top
+        lsp-ui-doc-use-webkit t
+        lsp-ui-doc-border (face-foreground 'default)
+
+        lsp-ui-sideline-enable nil
+        lsp-ui-sideline-ignore-duplicate t)
   :config
-  (setq lsp-ui-sideline-enable t
-        lsp-ui-sideline-show-symbol t
-        lsp-ui-sideline-show-hover t
-        lsp-ui-sideline-show-code-actions t
-        lsp-ui-sideline-update-mode 'point))
+  ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+  ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+  (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+    (setq mode-line-format nil))
+  )
 
 (provide 'init-lsp)
 

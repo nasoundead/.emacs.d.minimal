@@ -34,21 +34,28 @@
   :mode
   ("\\.py\\'" . python-mode)
   ("\\.wsgi$" . python-mode)
+  :hook (python-mode . lsp)
   :init
   (setq-default indent-tabs-mode nil)
   :config
   (setq python-indent-offset 4))
 
-(use-package anaconda-mode
-  :ensure t
-  :after python
-  :hook
-  (python-mode . anaconda-mode)
-  (python-mode . anaconda-eldoc-mode))
+;; Format using YAPF
+;; Install: pip install yapf
+(use-package yapfify
+  :diminish yapf-mode
+  :hook (python-mode . yapf-mode))
 
-(use-package company-anaconda
-  :ensure t
-  :hook (python-mode . (lambda () (add-to-list (make-local-variable 'company-backends)'(company-anaconda :with company-capf)))))
+;; (use-package anaconda-mode
+;;   :ensure t
+;;   :after python
+;;   :hook
+;;   (python-mode . anaconda-mode)
+;;   (python-mode . anaconda-eldoc-mode))
+
+;; (use-package company-anaconda
+;;   :ensure t
+;;   :hook (python-mode . (lambda () (add-to-list (make-local-variable 'company-backends)'(company-anaconda :with company-capf)))))
 
 (use-package pipenv
   :ensure t
