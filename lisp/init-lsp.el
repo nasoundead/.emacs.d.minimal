@@ -1,6 +1,6 @@
-;; init-lsp.el --- Initialize Golang configurations.	-*- lexical-binding: t -*-
+;; init-lsp.el --- Initialize lsp configurations.	-*- lexical-binding: t -*-
 
-;; Copyright (C) 2019 Vincent Zhang
+;; Copyright (C) 2019 Haibo Wang
 
 ;; Author: Bruce Wong <nasoundead@163.com>
 ;; URL: https://github.com/nasoundead/.emacs.d.minimal
@@ -31,10 +31,6 @@
 ;;; Code:
 ;;
 ;;
-;; (use-package eglot
-;;   :hook (prog-mode . eglot-ensure)
-;;   :config
-;;   (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point))
 
 (use-package lsp-mode
   :ensure t
@@ -47,14 +43,14 @@
               flymake-fringe-indicator-position 'right-fringe)
   )
 
-(use-package company-lsp :commands company-lsp)
-;; (use-package company-lsp
-;;   :after  company
-;;   :ensure t
-;;   :init
-;;   (setq ;; company-lsp-enable-snippet t
-;;    company-lsp-cache-candidates 'auto)
-;;   )
+;; (use-package company-lsp :commands company-lsp)
+(use-package company-lsp
+  :after  company
+  :ensure t
+  :init
+  (setq  company-lsp-enable-snippet t
+         company-lsp-cache-candidates 'auto)
+  )
 
 (use-package lsp-ui
   :ensure t
@@ -81,6 +77,8 @@
   (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
     (setq mode-line-format nil))
   )
+
+(use-package dap-mode)
 
 (provide 'init-lsp)
 

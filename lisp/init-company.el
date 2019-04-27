@@ -39,18 +39,26 @@
     (company-abort)
     (call-interactively 'company-yasnippet))
   :bind (("M-/" . company-complete)
-         ("<backtab>" . company-yasnippet)
+         ("<backtab>" . sea-company-yasnippet)
          :map company-active-map
          ("C-p" . company-select-previous)
+         ("C-k" . company-select-previous)
          ("C-n" . company-select-next)
+         ("C-j" . company-select-next)
          ("<tab>" . company-complete-common-or-cycle)
          ("<backtab>" . sea-company-yasnippet)
          :map company-search-map
          ("C-p" . company-select-previous)
-         ("C-n" . company-select-next))
+         ("C-k" . company-select-previous)
+         ("C-n" . company-select-next)
+         ("C-j" . company-select-next))
   :hook (after-init . global-company-mode)
 
   :config
+  (setq company-backends (remove 'company-clang company-backends)
+        company-backends (remove 'company-xcode company-backends)
+        company-backends (remove 'company-gtags company-backends)
+        company-backends (remove 'company-cmake company-backends))
   (setq company-tooltip-align-annotations t ; aligns annotation to the right
         company-tooltip-limit 12            ; bigger popup window
         company-idle-delay .2               ; decrease delay before autocompletion popup shows

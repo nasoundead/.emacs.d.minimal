@@ -31,6 +31,7 @@
 ;;; Code:
 ;;
 (use-package python
+  :after lsp-mode
   :mode
   ("\\.py\\'" . python-mode)
   ("\\.wsgi$" . python-mode)
@@ -38,6 +39,7 @@
   :init
   (setq-default indent-tabs-mode nil)
   :config
+  (define-key python-mode-map (kbd "<backtab>") nil)
   (setq python-indent-offset 4))
 
 ;; Format using YAPF
