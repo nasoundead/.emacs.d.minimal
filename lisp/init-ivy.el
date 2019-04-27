@@ -47,7 +47,7 @@
 
   (ivy-mode)
   (general-define-key
-   "<C-return>" #'ivy-switch-buffer
+   ;; "<C-return>" #'ivy-switch-buffer
    "C-c C-p"    #'counsel-yank-pop
    "C-c C-m"    #'counsel-mark-ring
    "C-c C-r"    #'ivy-resume)

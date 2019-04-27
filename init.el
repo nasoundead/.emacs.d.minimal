@@ -71,6 +71,7 @@ Use this for files that change often, like cache files.")
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 (add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
+(require 'init-evil)
 (require 'init-basic)
 (require 'init-folding)
 (require 'init-locales)
