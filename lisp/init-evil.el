@@ -98,10 +98,6 @@
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
   :config (evil-commentary-mode 1))
 
-(use-package evil-easymotion
-  :after evil-snipe
-  :commands evilem-create)
-
 (use-package evil-escape
   :commands evil-escape-mode
   :init
@@ -113,7 +109,6 @@
   :config
   ;; no `evil-escape' in minibuffer
   (push #'minibufferp evil-escape-inhibit-functions))
-
 
 
 (use-package evil-mc
