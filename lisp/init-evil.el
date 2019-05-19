@@ -84,7 +84,33 @@
  :keymaps 'ivy-minibuffer-map
  "C-j" #'ivy-next-line
  "C-k" #'ivy-previous-line)
-
+(general-define-key
+ :keymaps 'neotree-mode-map
+ :states 'normal
+ "g" #'nil
+ [tab] #'neotree-quick-look
+ [return] #'neotree-enter
+ [backspace] #'evil-window-prev
+ "c"         #'neotree-create-node
+ "r"         #'neotree-rename-node
+ "d"         #'neotree-delete-node
+ "j"         #'neotree-next-line
+ "k"         #'neotree-previous-line
+ "n"         #'neotree-next-line
+ "p"         #'neotree-previous-line
+ "h"         #'+neotree/collapse-or-up
+ "l"         #'+neotree/expand-or-open
+ "J"         #'neotree-select-next-sibling-node
+ "K"         #'neotree-select-previous-sibling-node
+ "H"         #'neotree-select-up-node
+ "L"         #'neotree-select-down-node
+ "G"         #'evil-goto-line
+ "gg"        #'evil-goto-first-line
+ "v"         #'neotree-enter-vertical-split
+ "s"         #'neotree-enter-horizontal-split
+ "q"         #'neotree-hide
+ "R"         #'neotree-refresh
+ )
 (use-package evil-lion
   :ensure t
   :bind (:map evil-normal-state-map

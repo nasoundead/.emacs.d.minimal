@@ -84,6 +84,41 @@ or the current buffer directory."
               (neotree-dir project-dir))
           (if file-name
               (neotree-find file-name))))))
+;;;###autoload
+  (defun +neotree/collapse-or-up ()
+    "Collapse an expanded directory node or go to the parent node."
+    (interactive)
+    (when-let* ((node (neo-buffer--get-filename-current-line)))
+      (if (file-directory-p node)
+          (if (neo-buffer--expanded-node-p node)
+              (+neotree/collapse)
+            (neotree-select-up-node))
+        (neotree-select-up-node))))
+
+;;;###autoload
+  (defun +neotree/collapse ()
+    "Collapse a neotree node."
+    (interactive)
+    (when-let* ((node (neo-buffer--get-filename-current-line)))
+      (when (file-directory-p node)
+        (neo-buffer--set-expand node nil)
+        (neo-buffer--refresh t))
+      (when neo-auto-indent-point
+        (neo-point-auto-indent))))
+
+;;;###autoload
+  (defun +neotree/expand-or-open ()
+    "Expand or open a neotree node."
+    (interactive)
+    (when-let* ((node (neo-buffer--get-filename-current-line)))
+      (cond ((file-directory-p node)
+             (neo-buffer--set-expand node t)
+             (neo-buffer--refresh t)
+             (when neo-auto-indent-point
+               (forward-line)
+               (neo-point-auto-indent)))
+            (t
+             (call-interactively #'neotree-enter)))))
   )
 
 
