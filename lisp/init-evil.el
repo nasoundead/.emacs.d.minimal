@@ -4,26 +4,26 @@
   :init
   (evil-mode 1))
 
-; (use-package evil-leader
-  ; :ensure t
-  ; :config
-  ; (global-evil-leader-mode)
-  ; (evil-leader/set-leader "<SPC>")
-  ; )
+                                        ; (use-package evil-leader
+                                        ; :ensure t
+                                        ; :config
+                                        ; (global-evil-leader-mode)
+                                        ; (evil-leader/set-leader "<SPC>")
+                                        ; )
 
-; (evil-leader/set-key
-    ; "ff" 'counsel-find-file
-    ; "bb" 'ivy-switch-buffer
-    ; "bp" 'previous-buffer
-    ; "bn" 'next-buffer
-    ; "bd" 'kill-this-buffer
-    ; "<SPC>" 'counsel-M-x
-    ; "wd" 'delete-window
-    ; "wm" 'delete-other-windows
-    ; "ws" 'split-window-horizontally-instead
-    ; "wv" 'split-window-vertically-instead
-    ; "gs" 'magit-status
-    ; )
+                                        ; (evil-leader/set-key
+                                        ; "ff" 'counsel-find-file
+                                        ; "bb" 'ivy-switch-buffer
+                                        ; "bp" 'previous-buffer
+                                        ; "bn" 'next-buffer
+                                        ; "bd" 'kill-this-buffer
+                                        ; "<SPC>" 'counsel-M-x
+                                        ; "wd" 'delete-window
+                                        ; "wm" 'delete-other-windows
+                                        ; "ws" 'split-window-horizontally-instead
+                                        ; "wv" 'split-window-vertically-instead
+                                        ; "gs" 'magit-status
+                                        ; )
 
 (general-create-definer my-leader-def
   ;; :prefix my-leader
@@ -80,10 +80,16 @@
  :states 'visual
  "v" #'er/expand-region
  "V" #'er/contract-region)
+
+(general-define-key
+ :states '(normal visual)
+ "gc" #'evil-commentary)
+
 (general-define-key
  :keymaps 'ivy-minibuffer-map
  "C-j" #'ivy-next-line
  "C-k" #'ivy-previous-line)
+
 (general-define-key
  :keymaps 'neotree-mode-map
  :states 'normal
