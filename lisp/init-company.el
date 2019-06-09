@@ -69,10 +69,10 @@
         company-dabbrev-downcase nil)
 
   ;; Add `company-elisp' backend for elisp.
-  (add-hook 'emacs-lisp-mode-hook
-            '(lambda ()
-               (require 'company-elisp)
-               (cl-pushnew 'company-elisp company-backends)))
+  ;; (add-hook 'emacs-lisp-mode-hook
+  ;;           '(lambda ()
+  ;;              (require 'company-elisp)
+  ;;              (cl-pushnew 'company-elisp company-backends)))
 
   ;; Popup documentation for completion candidates
   (when (and (not EMACS26+) (display-graphic-p))
