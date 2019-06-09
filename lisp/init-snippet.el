@@ -8,10 +8,10 @@
   (add-to-list 'company-backends 'company-yasnippet)
   ;; :init
   ;; Activate global
-  ;; (yas-global-mode)
-  (yas-reload-all)
-  (add-hook 'prog-mode-hook #'yas-minor-mode)
-  (add-to-list 'yas-snippet-dir "~/.emacs.d/snippets")
+  (yas-global-mode)
+  ;; (yas-reload-all)
+  ;; (add-hook 'prog-mode-hook #'yas-minor-mode)
+  ;; (add-to-list 'yas-snippet-dir "~/.emacs.d/snippets")
   )
 
 (use-package yasnippet-snippets

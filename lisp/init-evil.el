@@ -1,29 +1,7 @@
-
 (use-package evil
   :ensure t
   :init
   (evil-mode 1))
-
-                                        ; (use-package evil-leader
-                                        ; :ensure t
-                                        ; :config
-                                        ; (global-evil-leader-mode)
-                                        ; (evil-leader/set-leader "<SPC>")
-                                        ; )
-
-                                        ; (evil-leader/set-key
-                                        ; "ff" 'counsel-find-file
-                                        ; "bb" 'ivy-switch-buffer
-                                        ; "bp" 'previous-buffer
-                                        ; "bn" 'next-buffer
-                                        ; "bd" 'kill-this-buffer
-                                        ; "<SPC>" 'counsel-M-x
-                                        ; "wd" 'delete-window
-                                        ; "wm" 'delete-other-windows
-                                        ; "ws" 'split-window-horizontally-instead
-                                        ; "wv" 'split-window-vertically-instead
-                                        ; "gs" 'magit-status
-                                        ; )
 
 (general-create-definer my-leader-def
   ;; :prefix my-leader

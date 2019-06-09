@@ -12,29 +12,31 @@
 (defun sea/init-ui (&optional frame)
   "Set the theme and load the font, in that order."
   (reapply-themes)
-  (set-face-attribute 'default nil :family "Iosevka" :height 120)
-  (set-face-attribute 'fixed-pitch nil :family "Iosevka")
-  (set-face-attribute 'variable-pitch nil :family "Baskerville")
-  (add-hook 'text-mode-hook
-            (lambda ()
-              (variable-pitch-mode 1)))
+  ;; (set-face-attribute 'default nil :family "Iosevka" :height 120)
+  ;; (set-face-attribute 'fixed-pitch nil :family "Iosevka")
+  ;; (set-face-attribute 'variable-pitch nil :family "Baskerville")
+  ;; (add-hook 'text-mode-hook
+  ;;           (lambda ()
+  ;;             (variable-pitch-mode 1)))
 
   ;; ============================================================
   ;; Setting English Font
   ;; (set-face-attribute 'default nil :font "DejaVu Sans Mono 11")
   ;; (set-face-attribute 'default nil :font "Inconsolata 12")
   (set-face-attribute 'default nil :font "Fantasque Sans Mono 12")
+  ;; (set-face-attribute 'default nil :font "Monoid 10")
   ;; Setting Chinese Font
   ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
   ;;   (set-fontset-font (frame-parameter nil 'font)
   ;;                     charset
   ;;                     (font-spec :family "Microsoft Yahei" :size 16)))
-
-  (set-fontset-font "fontset-default" 'chinese-gbk "Microsoft Yahei")
-  (setq face-font-rescale-alist '(("宋体" . 1.0)
-                                  ("微软雅黑" . 1.0)
-                                  ("Microsoft Yahei" . 1.0)
-                                  ))
+  (when IS-WIN
+    (set-fontset-font "fontset-default" 'chinese-gbk "Microsoft Yahei")
+    (setq face-font-rescale-alist '(("宋体" . 1.0)
+                                    ("微软雅黑" . 1.0)
+                                    ("Microsoft Yahei" . 1.0)
+                                    ))
+    )
   (require 'font-lock+)
   (run-hooks 'sea-init-ui-hook))
 (add-hook 'after-init-hook #'sea/init-ui)
@@ -42,15 +44,12 @@
 (setq custom-safe-themes t)
 (use-package spacemacs-theme)
 (use-package color-theme-sanityinc-tomorrow)
-(use-package poet-theme)
 (use-package doom-themes)
 (use-package zenburn-theme)
 (use-package immaterial-theme)
-(use-package solarized-theme)
-;; (setq-default custom-enabled-themes '(atom-one-dark))
-;; (setq-default custom-enabled-themes '(zenburn))
+(use-package kaolin-themes)
+
 ;; (setq-default custom-enabled-themes '(doom-one))
-;; (setq-default custom-enabled-themes '(poet-theme))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()
@@ -59,18 +58,6 @@
     (unless (custom-theme-p theme)
       (load-theme theme)))
   (custom-set-variables `(custom-enabled-themes (quote ,custom-enabled-themes))))
-
-(defun poet-light ()
-  "Activate a light color theme."
-  (interactive)
-  (setq custom-enabled-themes '(poet))
-  (reapply-themes))
-
-(defun poet-dark ()
-  "Activate a light color theme."
-  (interactive)
-  (setq custom-enabled-themes '(poet-dark))
-  (reapply-themes))
 
 (defun sanityinc-light ()
   "Activate a light color theme."

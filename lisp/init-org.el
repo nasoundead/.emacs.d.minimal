@@ -62,10 +62,6 @@
 
   ;; TODO to sort
   (use-package ob-async :ensure t)
-  (use-package org-checklist)
-  (use-package ob-exp)
-  (use-package ox-bibtex)
-  (use-package org-protocol)
   (use-package org-dashboard :ensure t)
 
   ;; Todo part
@@ -153,123 +149,15 @@
   ;; Deadline management
   (setq org-agenda-include-diary nil
         org-deadline-warning-days 7
-        org-timeline-show-empty-dates t
+        org-timeline-show-empty-dates t)
 
-        ;;
-        org-agenda-category-icon-alist `(
-                                         ;; Tools / utils
-                                         ("[Ee]macs" ,(format "%s/third_parties/icons/emacs24.png" config-basedir) nil nil :ascent center)
-                                         ("[Oo]rg" ,(format "%s/third_parties/icons/org.png" config-basedir) nil nil :ascent center)
-                                         ("^[Hh][Tt][Ss]$" ,(format "%s/third_parties/icons/hts.png" config-basedir) nil nil :ascent center)
-                                         ("^[Mm]ary[tT]\\{2\\}[sS]$" ,(format "%s/third_parties/icons/marytts.png" config-basedir) nil nil :ascent center)
-                                         ("^SFB$" ,(format "%s/third_parties/icons/sfb.png" config-basedir) nil nil :ascent center)
-                                         ("[Ss]ystem" ,(format "%s/third_parties/icons/debian.png" config-basedir) nil nil :ascent center)
-                                         ("[Tt]ools?" ,(format "%s/third_parties/icons/wrench.png" config-basedir) nil nil :ascent center)
-                                         ("[Ex]pe\\(riment\\)s?" ,(format "%s/third_parties/icons/expes.png" config-basedir) nil nil :ascent center)
-
-                                         ;; Admin / meeting
-                                         ("[Aa]dmin" ,(format "%s/third_parties/icons/admin.png" config-basedir) nil nil :ascent center)
-                                         ("[Mm]eeting" ,(format "%s/third_parties/icons/meeting.png" config-basedir) nil nil :ascent center)
-                                         ("[Aa]ppointments?" ,(format "%s/third_parties/icons/appointment.png" config-basedir) nil nil :ascent center)
-                                         ("[Vv]isitors" ,(format "%s/third_parties/icons/visitors.png" config-basedir) nil nil :ascent center)
-                                         ("synsig" ,(format "%s/third_parties/icons/isca.png" config-basedir) nil nil :ascent center)
-                                         ("\\([Tt]rip\\|[Dd]eplacement\\)" ,(format "%s/third_parties/icons/trip.png" config-basedir) nil nil :ascent center)
-                                         ("Train" ,(format "%s/third_parties/icons/train.png" config-basedir) nil nil :ascent center)
-
-                                         ;; Deadlines / dates
-                                         ("\\([Pp]resentations?\\)" ,(format "%s/third_parties/icons/meeting.png" config-basedir) nil nil :ascent center)
-                                         ("\\([Pp]apers?\\|[Bb]lio?\\|[Aa]rticles?\\)" ,(format "%s/third_parties/icons/book.png" config-basedir) nil nil :ascent center)
-                                         ("[Mm]ails?" ,(format "%s/third_parties/icons/gnus.png" config-basedir) nil nil :ascent center)
-                                         ("[Rr]eview?" ,(format "%s/third_parties/icons/review.png" config-basedir) nil nil :ascent center)
-
-                                         ;; Personnal dates
-                                         ("Medical" ,(format "%s/third_parties/icons/medical.png" config-basedir) nil nil :ascent center)
-                                         ("\\(Party\\|Celeb\\)" ,(format "%s/third_parties/icons/party.png" config-basedir) nil nil :ascent center)
-                                         ("Anniv" ,(format "%s/third_parties/icons/anniversary.png" config-basedir) nil nil :ascent center)
-                                         ("\\([Hh]olidays\\|[Vv]acations?\\)" ,(format "%s/third_parties/icons/holidays.png" config-basedir) nil nil :ascent center)
-
-                                         ;; Personnal diverse
-                                         ("Music" ,(format "%s/third_parties/icons/music.png" config-basedir) nil nil :ascent center)
-                                         ("Book" ,(format "%s/third_parties/icons/book.png" config-basedir) nil nil :ascent center)
-                                         ("[Pp]rojects?" ,(format "%s/third_parties/icons/project.png" config-basedir) nil nil :ascent center)
-                                         (".*" '(space . (:width (16)))))
-
-        ;; Some commands
-        org-agenda-custom-commands '(
-                                     ("D" todo "DONE")
-
-                                     ("w" "Work and administrative"
-                                      ((agenda)
-                                       (tags-todo "WORK")
-                                       (tags-todo "OFFICE")
-                                       (tags-todo "ADMIN")))
-
-                                     ("p" "personnal"
-                                      ((agenda)
-                                       (tags-todo "PERSONNAL")))
-
-                                     ("d" "Daily Action List"
-                                      ((agenda "" ((org-agenda-ndays 1)
-                                                   (org-agenda-sorting-strategy
-                                                    '((agenda time-up priority-down tag-up) ))
-                                                   (org-deadline-warning-days 0)))))))
-
-  ;; Agenda view shortcuts
-  (define-key org-agenda-mode-map "v" 'hydra-org-agenda-view/body)
 
   (defun org-agenda-cts ()
     (let ((args (get-text-property
                  (min (1- (point-max)) (point))
                  'org-last-args)))
       (nth 2 args)))
-
-
-  (defhydra hydra-org-agenda-view (:color blue :hint none)
-    "
-    _d_: ?d? day        _g_: time grid=?g? _a_: arch-trees
-    _w_: ?w? week       _[_: inactive      _A_: arch-files
-    _t_: ?t? fortnight  _f_: follow=?f?    _r_: report=?r?
-    _m_: ?m? month      _e_: entry =?e?    _D_: diary=?D?
-    _y_: ?y? year       _q_: quit          _L__l__c_: ?l?
-       "
-
-    ("SPC" org-agenda-reset-view)
-    ("d" org-agenda-day-view
-     (if (eq 'day (org-agenda-cts))
-         "[x]" "[ ]"))
-    ("w" org-agenda-week-view
-     (if (eq 'week (org-agenda-cts))
-         "[x]" "[ ]"))
-    ("t" org-agenda-fortnight-view
-     (if (eq 'fortnight (org-agenda-cts))
-         "[x]" "[ ]"))
-    ("m" org-agenda-month-view
-     (if (eq 'month (org-agenda-cts)) "[x]" "[ ]"))
-    ("y" org-agenda-year-view
-     (if (eq 'year (org-agenda-cts)) "[x]" "[ ]"))
-    ("l" org-agenda-log-mode
-     (format "% -3S" org-agenda-show-log))
-    ("L" (org-agenda-log-mode '(4)))
-    ("c" (org-agenda-log-mode 'clockcheck))
-    ("f" org-agenda-follow-mode
-     (format "% -3S" org-agenda-follow-mode))
-    ("a" org-agenda-archives-mode)
-    ("A" (org-agenda-archives-mode 'files))
-    ("r" org-agenda-clockreport-mode
-     (format "% -3S" org-agenda-clockreport-mode))
-    ("e" org-agenda-entry-text-mode
-     (format "% -3S" org-agenda-entry-text-mode))
-    ("g" org-agenda-toggle-time-grid
-     (format "% -3S" org-agenda-use-time-grid))
-    ("D" org-agenda-toggle-diary
-     (format "% -3S" org-agenda-include-diary))
-    ("!" org-agenda-toggle-deadlines)
-    ("["
-     (let ((org-agenda-include-inactive-timestamps t))
-       (org-agenda-check-type t 'timeline 'agenda)
-       (org-agenda-redo)))
-    ("q" (message "Abort") :exit t)))
-
+  )
 ;; Global shortcut to call org agenda
 (global-set-key (kbd "<f12>") 'org-agenda)
 
