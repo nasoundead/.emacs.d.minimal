@@ -57,6 +57,7 @@
 
   ;; Activate spelling
   (add-hook 'org-mode 'flyspell-mode)
+  (add-to-list 'org-export-backends 'md)
   (add-to-list 'ispell-skip-region-alist '("^#+begin_src" . "^#+end_src"))
 
 
@@ -68,7 +69,8 @@
   (setq org-todo-keywords '((sequence
                              "TODO(t)" "REVIEW(r)" "NEXT(N)" "STARTED(s)"
                              "WAITING(w)" "DELEGATED(e)" "MAYBE(m)" "|"
-                             "DONE(d)" "NOTE(n)" "DEFERRED(f)" "CANCELLED(c@/!)"))
+                             "DONE(d)" "NOTE(n)" "DEFERRED(f)" "CANCELLED(c@/!)")
+							(sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
 
         org-todo-state-tags-triggers '(("CANCELLED" ("CANCELLED" . t))
                                        ("WAITING" ("WAITING" . t))
@@ -173,112 +175,116 @@
           (:auto-category t)
           )))
 
-(use-package org
+;; TODO: fail gracefully
+(defun sanityinc/grab-ditaa (url jar-name)
+  "Download URL and extract JAR-NAME as `org-ditaa-jar-path'."
+  ;; TODO: handle errors
+  (message "Grabbing " jar-name " for org.")
+  (let ((zip-temp (make-temp-name "emacs-ditaa")))
+    (unwind-protect
+        (progn
+          (when (executable-find "unzip")
+            (url-copy-file url zip-temp)
+            (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
+                                   " " (shell-quote-argument jar-name) " > "
+                                   (shell-quote-argument org-ditaa-jar-path)))))
+      (when (file-exists-p zip-temp)
+        (delete-file zip-temp)))))
+(eval-after-load 'ob-ditaa
+  (unless (and (boundp 'org-ditaa-jar-path)
+               (file-exists-p org-ditaa-jar-path))
+    (let ((jar-name "ditaa0_9.jar")
+          (url "http://jaist.dl.sourceforge.net/project/ditaa/ditaa/0.9/ditaa0_9.zip"))
+      (setq org-ditaa-jar-path (expand-file-name jar-name sea-etc-dir))
+      (unless (file-exists-p org-ditaa-jar-path)
+        (sanityinc/grab-ditaa url jar-name)))))
+
+(eval-after-load 'ob-plantuml
+  (let ((jar-name "plantuml.jar")
+        (url "http://jaist.dl.sourceforge.net/project/plantuml/plantuml.jar"))
+    (setq org-plantuml-jar-path (expand-file-name jar-name sea-etc-dir))
+    (unless (file-exists-p org-plantuml-jar-path)
+      (url-copy-file url org-plantuml-jar-path))))
+
+(use-package plantuml-mode
+  :init
+  (setq plantuml-jar-path (expand-file-name sea-etc-dir "plantuml.jar"))
+  ;; Enable plantuml-mode for PlantUML files
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
+
+
+(use-package org-projectile
   :config
+  (org-projectile:per-repo)
+  (setq org-projectile:per-repo-filename "todo.org"
+        org-agenda-files (append org-agenda-files (org-projectile:todo-files))))
 
-  ;; Capture
-  (setq org-capture-templates
-        `(("b" "Adding book" entry
-           (file+headline "~/Dropbox/org/todo/todo.org" "To read")
-           (file ,(format "%s/third_parties/org-capture-templates/book.org" config-basedir)))
+(use-package org-bullets
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-          ("L" "Bookmark" entry
-           (file+olp "~/Dropbox/org/todo/todo.org" "To review" "Bookmarks")
-           (file ,(format "%s/third_parties/org-capture-templates/bookmark.org" config-basedir)))
+;; Editing
+(setq org-list-allow-alphabetical t
+      org-highlight-latex-and-related '(latex)
+      org-babel-results-keyword "results" ;; Display images directly in the buffer
+      org-confirm-babel-evaluate nil
+      org-startup-with-inline-images t)
 
-          ("m" "mail" entry
-           (file+headline "~/Dropbox/org/todo/todo.org" "Mailing")
-           (file ,(format "%s/third_parties/org-capture-templates/mail.org" config-basedir)))
+(use-package org-notebook :ensure t)
 
-          ("M" "MSP calendar" entry
-           (file "~/Calendars/Calendar-MSP.org")
-           (file ,(format "%s/third_parties/org-capture-templates/calendar.org" config-basedir)))
+;; Add languages
+(use-package ob-ipython :ensure t)
+(org-babel-do-load-languages 'org-babel-load-languages
+                             '((emacs-lisp . t)
+                               (dot . t)
+                               (ditaa . t)
+                               (R . t)
+                               (ipython . t)
+                               (ruby . t)
+                               (gnuplot . t)
+                               (clojure . t)
+                               (shell . t)
+                               (ledger . t)
+                               (org . t)
+                               (plantuml . t)
+                               (latex . t)))
+;; Define specific modes for specific tools
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 
-          ("P" "Personnal calendar" entry
-           (file "~/Calendars/Calendar-Personal.org")
-           (file ,(format "%s/third_parties/org-capture-templates/calendar.org" config-basedir)))
+;; Block Template
+(use-package hydra :ensure t
+  :config
+  ;; Define the templates
+  (setq org-structure-template-alist
+        '(("s" "#+begin_src ?\n\n#+end_src" "<src lang=\"?\">\n\n</src>")
+          ("e" "#+begin_example\n?\n#+end_example" "<example>\n?\n</example>")
+          ("q" "#+begin_quote\n?\n#+end_quote" "<quote>\n?\n</quote>")
+          ("v" "#+begin_verse\n?\n#+end_verse" "<verse>\n?\n/verse>")
+          ("c" "#+begin_center\n?\n#+end_center" "<center>\n?\n/center>")
+          ("l" "#+begin_export latex\n?\n#+end_export" "<literal style=\"latex\">\n?\n</literal>")
+          ("L" "#+latex: " "<literal style=\"latex\">?</literal>")
+          ("h" "#+begin_export html\n?\n#+end_exrt" "<literal style=\"html\">\n?\n</literal>")
+          ("H" "#+html: " "<literal style=\"html\">?</literal>")
+          ("a" "#+begin_export ascii\n?\n#+end_export")
+          ("A" "#+ascii: ")
+          ("i" "#+index: ?" "#+index: ?")
+          ("I" "#+include: %file ?" "<include file=%file markup=\"?\">")))
 
-          ("r" "RSS" entry
-           (file+olp "~/Dropbox/org/todo/todo.org" "To review" "RSS")
-           (file ,(format "%s/third_parties/org-capture-templates/rss.org" config-basedir)))
+  ;; Shortcuts
+  (defun hot-expand (str &optional mod)
+    "Expand org template."
+    (let (text)
+      (when (region-active-p)
+        (setq text (buffer-substring (region-beginning) (region-end)))
+        (delete-region (region-beginning) (region-end)))
+      (insert str)
+      `      (org-try-structure-completion)
+      (when mod (insert mod) (forward-line))
+      (when text (insert text))))
 
-          ("t" "ToDo Entry" entry
-           (file+headline "~/Dropbox/org/todo/todo.org" "To sort")
-           (file ,(format "%s/third_parties/org-capture-templates/default.org" config-basedir))
-           :empty-lines-before 1)))
-
-  (use-package org-chef
-    :ensure t
-    :config
-    (add-to-list 'org-capture-templates
-                 '("c" "Cookbook" entry (file "~/Dropbox/recipes/cookbook.org")
-                   "%(org-chef-get-recipe-from-url)"
-                   :empty-lines 1)))
-
-  ;; Editing
-  (setq org-list-allow-alphabetical t
-        org-highlight-latex-and-related '(latex)
-        org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar"
-        org-babel-results-keyword "results" ;; Display images directly in the buffer
-        org-confirm-babel-evaluate nil
-        org-startup-with-inline-images t)
-
-  (use-package org-notebook :ensure t)
-
-  ;; Add languages
-  (use-package ob-ipython :ensure t)
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               '((emacs-lisp . t)
-                                 (dot . t)
-                                 (ditaa . t)
-                                 (R . t)
-                                 (ipython . t)
-                                 (ruby . t)
-                                 (gnuplot . t)
-                                 (clojure . t)
-                                 (shell . t)
-                                 (ledger . t)
-                                 (org . t)
-                                 (plantuml . t)
-                                 (latex . t)))
-
-                                        ; Define specific modes for specific tools
-  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-  (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
-
-  ;; Block Template
-  (use-package hydra :ensure t
-    :config
-    ;; Define the templates
-    (setq org-structure-template-alist
-          '(("s" "#+begin_src ?\n\n#+end_src" "<src lang=\"?\">\n\n</src>")
-            ("e" "#+begin_example\n?\n#+end_example" "<example>\n?\n</example>")
-            ("q" "#+begin_quote\n?\n#+end_quote" "<quote>\n?\n</quote>")
-            ("v" "#+begin_verse\n?\n#+end_verse" "<verse>\n?\n/verse>")
-            ("c" "#+begin_center\n?\n#+end_center" "<center>\n?\n/center>")
-            ("l" "#+begin_export latex\n?\n#+end_export" "<literal style=\"latex\">\n?\n</literal>")
-            ("L" "#+latex: " "<literal style=\"latex\">?</literal>")
-            ("h" "#+begin_export html\n?\n#+end_exrt" "<literal style=\"html\">\n?\n</literal>")
-            ("H" "#+html: " "<literal style=\"html\">?</literal>")
-            ("a" "#+begin_export ascii\n?\n#+end_export")
-            ("A" "#+ascii: ")
-            ("i" "#+index: ?" "#+index: ?")
-            ("I" "#+include: %file ?" "<include file=%file markup=\"?\">")))
-
-    ;; Shortcuts
-    (defun hot-expand (str &optional mod)
-      "Expand org template."
-      (let (text)
-        (when (region-active-p)
-          (setq text (buffer-substring (region-beginning) (region-end)))
-          (delete-region (region-beginning) (region-end)))
-        (insert str)
-        `      (org-try-structure-completion)
-        (when mod (insert mod) (forward-line))
-        (when text (insert text))))
-
-    (defhydra hydra-org-template (:color blue :hint nil)
-      "
+  (defhydra hydra-org-template (:color blue :hint nil)
+    "
      Org template
 
  block               src block         structure
@@ -291,125 +297,43 @@ _a_: ascii         _u_: Plantuml    _A_: ASCII:
 _l_: latex         _d_: ditaa
 _h_: html          _S_: shell
 "
-      ("s" (hot-expand "<s"))
-      ("E" (hot-expand "<e"))
-      ("q" (hot-expand "<q"))
-      ("v" (hot-expand "<v"))
-      ("c" (hot-expand "<c"))
-      ("l" (hot-expand "<l"))
-      ("h" (hot-expand "<h"))
-      ("a" (hot-expand "<a"))
-      ("L" (hot-expand "<L"))
-      ("i" (hot-expand "<i"))
-      ("e" (hot-expand "<s" "emacs-lisp"))
-      ("p" (hot-expand "<s" "python"))
-      ("P" (hot-expand "<s" "perl"))
-      ("S" (hot-expand "<s" "sh"))
-      ("d" (hot-expand "<s" "ditaa :file CHANGE.png :cache yes"))
-      ("u" (hot-expand "<s" "plantuml :file CHANGE.svg :cache yes"))
-      ("I" (hot-expand "<I"))
-      ("H" (hot-expand "<H"))
-      ("A" (hot-expand "<A"))
-      ("<" self-insert-command "ins")
-      ("ESC" nil "quit"))
+    ("s" (hot-expand "<s"))
+    ("E" (hot-expand "<e"))
+    ("q" (hot-expand "<q"))
+    ("v" (hot-expand "<v"))
+    ("c" (hot-expand "<c"))
+    ("l" (hot-expand "<l"))
+    ("h" (hot-expand "<h"))
+    ("a" (hot-expand "<a"))
+    ("L" (hot-expand "<L"))
+    ("i" (hot-expand "<i"))
+    ("e" (hot-expand "<s" "emacs-lisp"))
+    ("p" (hot-expand "<s" "python"))
+    ("P" (hot-expand "<s" "perl"))
+    ("S" (hot-expand "<s" "sh"))
+    ("d" (hot-expand "<s" "ditaa :file CHANGE.png :cache yes"))
+    ("u" (hot-expand "<s" "plantuml :file CHANGE.svg :cache yes"))
+    ("I" (hot-expand "<I"))
+    ("H" (hot-expand "<H"))
+    ("A" (hot-expand "<A"))
+    ("<" self-insert-command "ins")
+    ("ESC" nil "quit"))
 
-    (define-key org-mode-map "<"
-      (lambda () (interactive)
-        (if (or (region-active-p) (looking-back "^"))
-            (hydra-org-template/body)
-          (self-insert-command 1))))
-    )
-  ;; id generation
-  (use-package org-id+
-    :ensure quelpa
-    :quelpa (org-id+ :repo "seblemaguer/org-id-plus" :fetcher github))
+  (define-key org-mode-map "<"
+    (lambda () (interactive)
+      (if (or (region-active-p) (looking-back "^"))
+          (hydra-org-template/body)
+        (self-insert-command 1))))
+  )
+;; id generation
+(use-package org-id+
+  :ensure quelpa
+  :quelpa (org-id+ :repo "seblemaguer/org-id-plus" :fetcher github))
 
-  
-  ;; Exporting
-  (use-package htmlize :ensure t)
+
+;; Exporting
+(use-package htmlize :ensure t)
 
-  (use-package ox-html
-    :after ox
-    :requires (htmlize)
-    :config
-    (setq org-html-xml-declaration '(("html" . "")
-                                     ("was-html" . "<?xml version=\"1.0\" encoding=\"%s\"?>")
-                                     ("php" . "<?php echo \"<?xml version=\\\"1.0\\\" encoding=\\\"%s\\\" ?>\"; ?>"))
-          org-export-html-inline-images t
-          org-export-with-sub-superscripts nil
-          org-export-html-style-extra "<link rel=\"stylesheet\" href=\"org.css\" type=\"text/css\" />"
-          org-export-html-style-include-default nil
-          org-export-htmlize-output-type 'css ; Do not generate internal css formatting for HTML exports
-          )
-
-    (defun endless/export-audio-link (path desc format)
-      "Export org audio links to hmtl."
-      (cl-case format
-        (html (format "<audio src=\"%s\" controls>%s</audio>" path (or desc "")))))
-    (org-add-link-type "audio" #'ignore #'endless/export-audio-link)
-
-
-    (defun endless/export-video-link (path desc format)
-      "Export org video links to hmtl."
-      (cl-case format
-        (html (format "<video controls src=\"%s\"></video>" path (or desc "")))))
-    (org-add-link-type "video" #'ignore #'endless/export-video-link)
-
-    (add-to-list 'org-file-apps '("\\.x?html?\\'" . "/usr/bin/vivaldi-stable %s")))
-
-  (use-package ox-reveal
-    :ensure t
-    :requires (ox-html htmlize))
-
-  ;; (use-package ox-latex
-  :after ox
-  :defer t
-  :config
-  (setq org-latex-listings t
-        org-export-with-LaTeX-fragments t
-        org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
-
-;; LaTex
-(use-package org
-  :after ox
-  :defer t
-  :config
-  (setq org-latex-listings t
-        org-export-with-LaTeX-fragments t
-        org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
-
-;; Beamer
-(use-package org
-  :after ox
-  :config
-  (defun my-beamer-bold (contents backend info)
-    (when (eq backend 'beamer)
-      (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
-  (add-to-list 'org-export-filter-bold-functions 'my-beamer-bold))
-
-;; Docbook
-(setq org-export-docbook-xsl-fo-proc-command "fop %s %s"
-      org-export-docbook-xslt-proc-command "xsltproc --output %s /usr/share/xml/docbook/stylesheet/nwalsh/fo/docbook.xsl %s")
-
-;; Markdown
-(use-package ox-gfm
-  :ensure t
-  :after ox
-  :config (require 'ox-gfm))
-
-;; Pandoc
-(use-package ox-pandoc
-  :ensure t
-  :after ox
-  :defer t
-  :config
-  ;; default options for all output formats
-  (setq org-pandoc-options '((standalone . t))
-        ;; cancel above settings only for 'docx' format
-        org-pandoc-options-for-docx '((standalone . nil))
-        ;; special settings for beamer-pdf and latex-pdf exporters
-        org-pandoc-options-for-beamer-pdf '((pdf-engine . "xelatex"))
-        org-pandoc-options-for-latex-pdf '((pdf-engine . "xelatex"))))
 
 (provide 'init-org)
 
