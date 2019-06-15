@@ -55,10 +55,6 @@
   :hook (after-init . global-company-mode)
 
   :config
-  (setq company-backends (remove 'company-clang company-backends)
-        company-backends (remove 'company-xcode company-backends)
-        company-backends (remove 'company-gtags company-backends)
-        company-backends (remove 'company-cmake company-backends))
   (setq company-tooltip-align-annotations t ; aligns annotation to the right
         company-tooltip-limit 12            ; bigger popup window
         company-idle-delay .2               ; decrease delay before autocompletion popup shows
@@ -68,6 +64,10 @@
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil)
 
+  ;; Better sorting and filtering
+  (use-package company-prescient
+    :hook (company-mode . company-prescient-mode))
+
   ;; Add `company-elisp' backend for elisp.
   ;; (add-hook 'emacs-lisp-mode-hook
   ;;           '(lambda ()
@@ -75,13 +75,12 @@
   ;;              (cl-pushnew 'company-elisp company-backends)))
 
   ;; Popup documentation for completion candidates
-  (when (and (not EMACS26+) (display-graphic-p))
-    (use-package company-quickhelp
-      :defines company-quickhelp-delay
-      :bind (:map company-active-map
-                  ("M-h" . company-quickhelp-manual-begin))
-      :hook (global-company-mode . company-quickhelp-mode)
-      :init (setq company-quickhelp-delay 0.8))))
+  (use-package company-quickhelp
+    :defines company-quickhelp-delay
+    :bind (:map company-active-map
+                ("M-h" . company-quickhelp-manual-begin))
+    :hook (global-company-mode . company-quickhelp-mode)
+    :init (setq company-quickhelp-delay 0.8)))
 
 ;; English helper
 ;; https://github.com/manateelazycat/company-english-helper
