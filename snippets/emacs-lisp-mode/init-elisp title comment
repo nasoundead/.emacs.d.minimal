@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: init-elisp title comment
+# key: ietc
+# --
+;;; init-$1.el --- Configure of $1 -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
+
+
+
+(provide 'init-$1)
+;;; init-$1.el ends here

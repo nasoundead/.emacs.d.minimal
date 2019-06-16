@@ -69,10 +69,12 @@
     :hook (company-mode . company-prescient-mode))
 
   ;; Add `company-elisp' backend for elisp.
-  ;; (add-hook 'emacs-lisp-mode-hook
-  ;;           '(lambda ()
-  ;;              (require 'company-elisp)
-  ;;              (cl-pushnew 'company-elisp company-backends)))
+  (add-hook 'emacs-lisp-mode-hook
+            '(lambda ()
+               ;; (require 'company-elisp)
+               (add-to-list (make-local-variable 'company-backends) 'company-elisp)
+               ;; (cl-pushnew 'company-elisp company-backends)
+               ))
 
   ;; Popup documentation for completion candidates
   (use-package company-quickhelp
