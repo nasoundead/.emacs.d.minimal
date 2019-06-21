@@ -31,7 +31,7 @@
   ;;                     charset
   ;;                     (font-spec :family "Microsoft Yahei" :size 16)))
   (when IS-WIN
-    (set-fontset-font "fontset-default" 'chinese-gbk "FangSong")
+    (set-fontset-font "fontset-default" 'chinese-gbk "Microsoft Yahei")
     (setq face-font-rescale-alist '(("宋体" . 1.0)
                                     ("微软雅黑" . 1.0)
                                     ("Microsoft Yahei" . 1.0)
@@ -48,7 +48,7 @@
 (use-package doom-themes)
 (use-package zenburn-theme)
 
-(setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
+;; (setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
 ;; (setq-default custom-enabled-themes '(doom-one))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
 ;; Ensure that themes will be applied even if they have not been customized

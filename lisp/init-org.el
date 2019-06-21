@@ -70,7 +70,7 @@
                              "TODO(t)" "REVIEW(r)" "NEXT(N)" "STARTED(s)"
                              "WAITING(w)" "DELEGATED(e)" "MAYBE(m)" "|"
                              "DONE(d)" "NOTE(n)" "DEFERRED(f)" "CANCELLED(c@/!)")
-							(sequence "⚑(T)" "🏴(I)" "❓(H)" "|" "✔(D)" "✘(C)"))
+                            )
 
         org-todo-state-tags-triggers '(("CANCELLED" ("CANCELLED" . t))
                                        ("WAITING" ("WAITING" . t))
@@ -98,12 +98,19 @@
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm))
 
+(add-hook 'org-babel-after-execute-hook 'naso/display-inline-images 'append)
+(add-hook 'org-mode-hook '(lambda ()(setq truncate-lines t)) 'append)
+(defun naso/display-inline-images ()
+  (condition-case nil
+      (org-display-inline-images)
+    (error nil)))
+
 ;; Todo management - some helpers
 (defun org-archive-all-done-item ()
   "Archive all item that have with prefix DONE."
   (interactive)
   (save-excursion
-    (show-all)
+    (outline-show-all)
     (goto-char (point-min))
     (if (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
         (progn
@@ -118,7 +125,7 @@
   "Delete all item that have with prefix DONE."
   (interactive)
   (save-excursion
-    (show-all)
+    (outline-show-all)
     (goto-char (point-min))
     (if (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
         (progn
@@ -279,7 +286,7 @@
         (setq text (buffer-substring (region-beginning) (region-end)))
         (delete-region (region-beginning) (region-end)))
       (insert str)
-      `      (org-try-structure-completion)
+      (org-try-structure-completion)
       (when mod (insert mod) (forward-line))
       (when text (insert text))))
 

@@ -21,5 +21,28 @@
   (set-selection-coding-system (if (eq system-type 'windows-nt) 'utf-16-le 'utf-8))
   (prefer-coding-system 'utf-8))
 
+
+;; coding
+(defun windows-shell-mode-coding ()
+  (set-buffer-file-coding-system 'gbk)
+  (set-buffer-process-coding-system 'gbk 'gbk))
+(defun python-encode-in-org-babel-execute (func body params)
+  (let ((coding-system-for-write 'utf-8))
+    (funcall func body params)))
+(cond
+ ((eq system-type 'IS-WIN)
+  (set-language-environment "chinese-gbk")
+  (prefer-coding-system 'utf-8)
+  (set-terminal-coding-system 'gbk)
+  (modify-coding-system-alist 'process "*" 'gbk)
+  (add-hook 'shell-mode-hook #'windows-shell-mode-coding)
+  (add-hook 'inferior-python-mode-hook #'windows-shell-mode-coding)
+  (advice-add #'org-babel-execute:python :around
+              #'python-encode-in-org-babel-execute))
+ (t
+  (set-language-environment "UTF-8")
+  (prefer-coding-system 'utf-8)))
+
+
 (provide 'init-locales)
 ;;; init-locales.el ends here

@@ -57,7 +57,7 @@
   (define-key dired-mode-map (kbd "~") '(lambda ()(interactive)(find-alternate-file "~/"))))
 
 
-(evil-define-key 'normal  dired-mode-map (kbd "~") '(lambda ()(interactive)(find-alternate-file "~/")))
-(evil-define-key 'normal  dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+;(evil-define-key 'normal  dired-mode-map (kbd "~") '(lambda ()(interactive)(find-alternate-file "~/")))
+;(evil-define-key 'normal  dired-mode-map (kbd "RET") 'dired-find-alternate-file)
 
 (provide 'init-dired)
