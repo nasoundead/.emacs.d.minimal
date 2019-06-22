@@ -33,7 +33,7 @@
   (global-set-key (kbd "C-^") #'crux-top-join-line)
   (global-set-key (kbd "C-x C-u") #'crux-upcase-region)
   (global-set-key (kbd "C-x C-l") #'crux-downcase-region)
-  (global-set-key (kbd "C-x M-c") #'crux-downcase-region)
+  (global-set-key (kbd "C-x M-c") #'crux-capitalize-region)
   (global-set-key (kbd "C-<backspace>") #'crux-kill-line-backwards)
   (global-set-key [remap kill-whole-line] #'crux-kill-whole-line)
   (setq save-abbrevs 'silently)
@@ -63,7 +63,7 @@
   :bind ("C-=" . er/expand-region))
 ;; Multiple cursors
 (use-package multiple-cursors
-  :bind (("C-S-c C-S-c"   . mc/edit-lines)
+  :bind (("C-M-L"   . mc/mark-all-dwim)
          ("C->"           . mc/mark-next-like-this)
          ("C-<"           . mc/mark-previous-like-this)
          ("C-c C-<"       . mc/mark-all-like-this)
@@ -112,43 +112,45 @@
   :init
   (dolist (hook '(emacs-lisp-mode-hook css-mode-hook))
     (add-hook hook #'aggressive-indent-mode)))
+
 (use-package avy
   :bind
-  ("C-'" . avy-goto-char)
-  ("C-\"". avy-goto-char-2))
+  ("C-'" . avy-goto-char))
+
 (use-package hydra)
-(use-package color-rg
-  :quelpa (color-rg :fetcher github :repo "manateelazycat/color-rg")
-  :init
-  (define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
-  :commands (isearch-toggle-color-rg
-             color-rg-search-input
-             color-rg-search-symbol
-             color-rg-search-project
-             color-rg-search-project-rails
-             sea-color-rg-search-input)
-  :config
-  (defun sea-color-rg-search-input (&optional keyword directory files)
-    ;; Save window configuration before do search.
-    ;; Just save when `color-rg-window-configuration-before-search' is nil
-    ;; Or current buffer is not `color-rg-buffer' (that mean user not quit color-rg and search again in other place).
-    (interactive)
-    (when (or (not color-rg-window-configuration-before-search)
-              (not (string-equal (buffer-name) color-rg-buffer)))
-      (setq color-rg-window-configuration-before-search (current-window-configuration))
-      (setq color-rg-buffer-point-before-search (point)))
-    ;; Set `enable-local-variables' to :safe, avoid emacs ask annoyingly question when open file by color-rg.
-    (setq enable-local-variables :safe)
-    ;; Search.
-    (let* ((search-keyboard
-            (or keyword
-                (color-rg-read-input)))
-           (search-directory
-            (read-directory-name "Dir: " default-directory))
-           (search-files
-            (or files
-                "everything")))
-      (color-rg-search search-keyboard search-directory search-files))))
+
+;; (use-package color-rg
+;;   :quelpa (color-rg :fetcher github :repo "manateelazycat/color-rg")
+;;   :init
+;;   (define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
+;;   :commands (isearch-toggle-color-rg
+;;              color-rg-search-input
+;;              color-rg-search-symbol
+;;              color-rg-search-project
+;;              color-rg-search-project-rails
+;;              sea-color-rg-search-input)
+;;   :config
+;;   (defun sea-color-rg-search-input (&optional keyword directory files)
+;;     ;; Save window configuration before do search.
+;;     ;; Just save when `color-rg-window-configuration-before-search' is nil
+;;     ;; Or current buffer is not `color-rg-buffer' (that mean user not quit color-rg and search again in other place).
+;;     (interactive)
+;;     (when (or (not color-rg-window-configuration-before-search)
+;;               (not (string-equal (buffer-name) color-rg-buffer)))
+;;       (setq color-rg-window-configuration-before-search (current-window-configuration))
+;;       (setq color-rg-buffer-point-before-search (point)))
+;;     ;; Set `enable-local-variables' to :safe, avoid emacs ask annoyingly question when open file by color-rg.
+;;     (setq enable-local-variables :safe)
+;;     ;; Search.
+;;     (let* ((search-keyboard
+;;             (or keyword
+;;                 (color-rg-read-input)))
+;;            (search-directory
+;;             (read-directory-name "Dir: " default-directory))
+;;            (search-files
+;;             (or files
+;;                 "everything")))
+;;       (color-rg-search search-keyboard search-directory search-files))))
 
 (use-package visual-regexp
   :init

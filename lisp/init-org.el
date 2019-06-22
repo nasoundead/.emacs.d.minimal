@@ -37,49 +37,82 @@
   :config
 
   ;; Global
-  (setq org-startup-indented t
-        org-enforce-todo-dependencies t
-        org-cycle-separator-lines 2
-        org-blank-before-new-entry '((heading) (plain-list-item . auto))
-        org-insert-heading-respect-content nil
-        org-reverse-note-order nil
-        org-show-following-heading t
-        org-show-hierarchy-above t
-        org-show-siblings '((default))
-        org-id-method 'uuidgen
-        org-deadline-warning-days 30
-        org-table-export-default-format "orgtbl-to-csv"
-        org-src-window-setup 'other-window
-        org-clone-delete-id t
-        org-cycle-include-plain-lists t
-        org-src-fontify-natively t
-        org-hide-emphasis-markers t)
+  (setq org-hide-emphasis-markers t)
+  ;; Editing
+  (setq org-list-allow-alphabetical t
+        org-highlight-latex-and-related '(latex)
+        org-babel-results-keyword "results" ;; Display images directly in the buffer
+        org-confirm-babel-evaluate nil
+        org-startup-with-inline-images t)
+
 
   ;; Activate spelling
   (add-hook 'org-mode 'flyspell-mode)
   (add-to-list 'org-export-backends 'md)
   (add-to-list 'ispell-skip-region-alist '("^#+begin_src" . "^#+end_src"))
 
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  (let* ((variable-tuple
+          (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+                ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+                ((x-list-fonts "Verdana")         '(:font "Verdana"))
+                ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+         (base-font-color     (face-foreground 'default nil 'default))
+         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+
+    (custom-theme-set-faces
+     'user
+     `(org-level-8 ((t (,@headline ,@variable-tuple))))
+     `(org-level-7 ((t (,@headline ,@variable-tuple))))
+     `(org-level-6 ((t (,@headline ,@variable-tuple))))
+     `(org-level-5 ((t (,@headline ,@variable-tuple))))
+     `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
+     `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
+     `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
+     `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
+     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+
+  (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
+   '(fixed-pitch ((t ( :family "Inconsolata" :slant normal :weight normal :height 1.0 :width normal)))))
+
+  (custom-theme-set-faces
+   'user
+   '(org-block                 ((t (:inherit fixed-pitch))))
+   '(org-document-info         ((t (:foreground "dark orange"))))
+   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+   '(org-link                  ((t (:foreground "royal blue" :underline t))))
+   '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-property-value        ((t (:inherit fixed-pitch))) t)
+   '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+   '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
+   '(org-indent                ((t (:inherit (org-hide fixed-pitch))))))
+
+  (add-hook 'org-mode-hook 'variable-pitch-mode)
+  (add-hook 'org-mode-hook 'visual-line-mode)
 
   ;; TODO to sort
   (use-package ob-async :ensure t)
   (use-package org-dashboard :ensure t)
+  (use-package org-bullets
+    :init
+    (setq org-bullets-bullet-list '( "⦿" "○"  "✿" "◆"))
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+
+  (use-package org-notebook :ensure t)
+
 
   ;; Todo part
   (setq org-todo-keywords '((sequence
-                             "TODO(t)" "REVIEW(r)" "NEXT(N)" "STARTED(s)"
-                             "WAITING(w)" "DELEGATED(e)" "MAYBE(m)" "|"
-                             "DONE(d)" "NOTE(n)" "DEFERRED(f)" "CANCELLED(c@/!)")
-                            )
-
-        org-todo-state-tags-triggers '(("CANCELLED" ("CANCELLED" . t))
-                                       ("WAITING" ("WAITING" . t))
-                                       ("HOLD" ("WAITING" . t) ("HOLD" . t))
-                                       (done ("WAITING") ("HOLD"))
-                                       ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                                       ("IN PROGRESS" ("NEXT") ("WAITING") ("CANCELLED") ("HOLD"))
-                                       ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-                                       ("DONE" ("WAITING") ("CANCELLED") ("HOLD"))))
+                             "TODO(t)" "IN-PROGRESS(I)"  "|"
+                             "DONE(d)" "DEFERRED(f)" "CANCELLED(c@/!)")))
 
   ;; Priority definition
   (setq org-highest-priority ?A
@@ -97,6 +130,8 @@
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm))
+
+
 
 (add-hook 'org-babel-after-execute-hook 'naso/display-inline-images 'append)
 (add-hook 'org-mode-hook '(lambda ()(setq truncate-lines t)) 'append)
@@ -226,18 +261,6 @@
   (setq org-projectile:per-repo-filename "todo.org"
         org-agenda-files (append org-agenda-files (org-projectile:todo-files))))
 
-(use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-;; Editing
-(setq org-list-allow-alphabetical t
-      org-highlight-latex-and-related '(latex)
-      org-babel-results-keyword "results" ;; Display images directly in the buffer
-      org-confirm-babel-evaluate nil
-      org-startup-with-inline-images t)
-
-(use-package org-notebook :ensure t)
 
 ;; Add languages
 (use-package ob-ipython :ensure t)

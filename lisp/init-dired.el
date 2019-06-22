@@ -53,7 +53,7 @@
           (t (error "mark exactly 2 files, at least 1 locally")))))
 (with-eval-after-load 'dired
   (define-key dired-mode-map (kbd "=") 'sea/dired-diff)
-  (define-key dired-mode-map (kbd "RET") 'find-alternate-file)
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
   (define-key dired-mode-map (kbd "~") '(lambda ()(interactive)(find-alternate-file "~/"))))
 
 
