@@ -36,8 +36,20 @@
                                     ("微软雅黑" . 1.0)
                                     ("Microsoft Yahei" . 1.0)
                                     ("FangSong" . 1.4)
-                                    ))
-    )
+                                    )))
+  (set-face-attribute 'mode-line nil
+                      :background "#353644"
+                      :foreground "white"
+                      :box '(:line-width 7 :color "#353644")
+                      :overline nil
+                      :underline nil)
+
+  (set-face-attribute 'mode-line-inactive nil
+                      :background "#565063"
+                      :foreground "white"
+                      :box '(:line-width 7 :color "#565063")
+                      :overline nil
+                      :underline nil)
   (require 'font-lock+)
   (run-hooks 'sea-init-ui-hook))
 (add-hook 'after-init-hook #'sea/init-ui)

@@ -1,4 +1,4 @@
-;; init-modeline.el --- modeline.	-*- lexical-binding: t -*-
+;; init-modeline.el --- modeline.   -*- lexical-binding: t -*-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Code:
@@ -100,26 +100,39 @@
                '(:eval (propertize
                         " " 'display
                         `((space :align-to (- (+ right right-fringe right-margin)
+                                              ,(+ 6 (string-width (let ((sys (coding-system-plist buffer-file-coding-system)))
+                                                                    (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
+                                                                           "UTF-8")
+                                                                          (t (upcase (symbol-name (plist-get sys :name))))))))
                                               ,(+ 3 (string-width mode-name)))))))
 
+               ;; "Displays the encoding and eol style of the buffer the same way Atom does."
+               '(:eval
+                 (propertize
+                  (concat (pcase (coding-system-eol-type buffer-file-coding-system)
+                            (0 "  LF ")
+                            (1 "CRLF ")
+                            (2 "  CR "))
+                          (let ((sys (coding-system-plist buffer-file-coding-system)))
+                            (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
+                                   "UTF-8")
+                                  (t (upcase (symbol-name (plist-get sys :name))))))
+                          " ")))
+
                ;; the current major mode
-               (propertize " %m " 'face 'font-lock-string-face)
+               ;; (propertize " %m " 'face 'font-lock-string-face)
+               '(:eval
+                 (propertize
+                  (concat (format-mode-line mode-name)
+                          (when (stringp mode-line-process)
+                            mode-line-process)
+                          (and (featurep 'face-remap)
+                               (/= text-scale-mode-amount 0)
+                               (format "(%+d)" text-scale-mode-amount)))))
                ;;minor-mode-alist
                ))
 
-(set-face-attribute 'mode-line nil
-                    :background "#353644"
-                    :foreground "white"
-                    :box '(:line-width 8 :color "#353644")
-                    :overline nil
-                    :underline nil)
 
-(set-face-attribute 'mode-line-inactive nil
-                    :background "#565063"
-                    :foreground "white"
-                    :box '(:line-width 8 :color "#565063")
-                    :overline nil
-                    :underline nil)
 
 (provide 'init-modeline)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
