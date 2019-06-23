@@ -128,7 +128,8 @@
                             mode-line-process)
                           (and (featurep 'face-remap)
                                (/= text-scale-mode-amount 0)
-                               (format "(%+d)" text-scale-mode-amount)))))
+                               (format "(%+d)" text-scale-mode-amount)))
+                  'face 'font-lock-string-face))
                ;;minor-mode-alist
                ))
 

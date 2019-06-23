@@ -119,38 +119,24 @@
 
 (use-package hydra)
 
-;; (use-package color-rg
-;;   :quelpa (color-rg :fetcher github :repo "manateelazycat/color-rg")
-;;   :init
-;;   (define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
-;;   :commands (isearch-toggle-color-rg
-;;              color-rg-search-input
-;;              color-rg-search-symbol
-;;              color-rg-search-project
-;;              color-rg-search-project-rails
-;;              sea-color-rg-search-input)
-;;   :config
-;;   (defun sea-color-rg-search-input (&optional keyword directory files)
-;;     ;; Save window configuration before do search.
-;;     ;; Just save when `color-rg-window-configuration-before-search' is nil
-;;     ;; Or current buffer is not `color-rg-buffer' (that mean user not quit color-rg and search again in other place).
-;;     (interactive)
-;;     (when (or (not color-rg-window-configuration-before-search)
-;;               (not (string-equal (buffer-name) color-rg-buffer)))
-;;       (setq color-rg-window-configuration-before-search (current-window-configuration))
-;;       (setq color-rg-buffer-point-before-search (point)))
-;;     ;; Set `enable-local-variables' to :safe, avoid emacs ask annoyingly question when open file by color-rg.
-;;     (setq enable-local-variables :safe)
-;;     ;; Search.
-;;     (let* ((search-keyboard
-;;             (or keyword
-;;                 (color-rg-read-input)))
-;;            (search-directory
-;;             (read-directory-name "Dir: " default-directory))
-;;            (search-files
-;;             (or files
-;;                 "everything")))
-;;       (color-rg-search search-keyboard search-directory search-files))))
+;; Keybindings
+;; Key	Action
+;; RET	Visit the result, file or push button at point
+;; o	Visit the result in another window
+;; n and p	Move between results or buttons
+;; N and P	Move between search hits
+;; g	Re-run the search
+;; TAB	Expand/collapse results for a file
+;; C-c C-k	Stop a running search
+;; C-u	A prefix argument prevents searches from starting automatically.
+;; You can also use M-x imenu to move between files in a results buffer.
+;; Minibuffer
+;; You use the minibuffer to enter a new search term.
+;; You can also reuse a previous search term with M-p in the minibuffer. To edit the default search term, use M-n.
+(use-package deadgrep
+  :init
+  (global-set-key (kbd "<f3>") #'deadgrep))
+
 
 (use-package visual-regexp
   :init
