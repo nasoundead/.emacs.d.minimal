@@ -24,7 +24,7 @@
   ;; (set-face-attribute 'default nil :font "DejaVu Sans Mono 11")
   ;; (set-face-attribute 'default nil :font "Inconsolata 12")
   ;; (set-face-attribute 'default nil :font "Fantasque Sans Mono 12")
-  (set-face-attribute 'default nil :font "Fira Code 13")
+  (set-face-attribute 'default nil :font "Fira Code 12")
   ;; Setting Chinese Font
   ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
   ;;   (set-fontset-font (frame-parameter nil 'font)

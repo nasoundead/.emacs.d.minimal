@@ -93,7 +93,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Variables
 ;;
 
-(defvar +sea-modeline-height 29
+(defvar +sea-modeline-height 26
   "How tall the mode-line should be (only respected in GUI emacs).")
 
 (defvar +sea-modeline-bar-width 3
@@ -602,7 +602,7 @@ Returns \"\" to not break --no-window-system."
 (def-modeline! main
   (bar matches " " buffer-info " %l:%c %p " selection-info)
   ;; (bar matches " " buffer-info "  %l:%c %p  " selection-info)
-  (buffer-encoding major-mode flycheck))
+  (buffer-encoding major-mode vcs))
 
 (def-modeline! minimal
   (bar matches " " buffer-info)
@@ -610,7 +610,7 @@ Returns \"\" to not break --no-window-system."
 
 (def-modeline! special
   (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
-  (buffer-encoding major-mode flycheck))
+  (buffer-encoding major-mode))
 
 (def-modeline! project
   (bar buffer-default-directory)
