@@ -18,7 +18,8 @@
 
 ;; Show TODOs in magit
 (use-package magit-todos
-  :hook (emacs-startup . magit-todos-mode))
+  ;; :hook (emacs-startup . magit-todos-mode)
+  )
 
 ;; Walk through git revisions of a file
 (use-package git-timemachine

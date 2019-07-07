@@ -21,10 +21,10 @@
 
   ;; ============================================================
   ;; Setting English Font
-  (set-face-attribute 'default nil :font "DejaVu Sans Mono 11")
+  ;; (set-face-attribute 'default nil :font "DejaVu Sans Mono 11")
   ;; (set-face-attribute 'default nil :font "Inconsolata 12")
   ;; (set-face-attribute 'default nil :font "Fantasque Sans Mono 12")
-  ;; (set-face-attribute 'default nil :font "Monoid 10")
+  (set-face-attribute 'default nil :font "Fira Code 13")
   ;; Setting Chinese Font
   ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
   ;;   (set-fontset-font (frame-parameter nil 'font)
@@ -37,28 +37,17 @@
                                     ("Microsoft Yahei" . 1.0)
                                     ("FangSong" . 1.4)
                                     )))
-  (set-face-attribute 'mode-line nil
-                      :background "#353644"
-                      :foreground "white"
-                      :box '(:line-width 7 :color "#353644")
-                      :overline nil
-                      :underline nil)
 
-  (set-face-attribute 'mode-line-inactive nil
-                      :background "#565063"
-                      :foreground "white"
-                      :box '(:line-width 7 :color "#565063")
-                      :overline nil
-                      :underline nil)
   (require 'font-lock+)
   (run-hooks 'sea-init-ui-hook))
 (add-hook 'after-init-hook #'sea/init-ui)
 
 (setq custom-safe-themes t)
-(use-package spacemacs-theme)
-(use-package color-theme-sanityinc-tomorrow)
-(use-package doom-themes)
-(use-package zenburn-theme)
+(require 'sea-theme)
+;; (use-package spacemacs-theme)
+;; (use-package color-theme-sanityinc-tomorrow)
+;; (use-package doom-themes)
+;; (use-package zenburn-theme)
 
 ;; (setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
 ;; (setq-default custom-enabled-themes '(doom-one))
