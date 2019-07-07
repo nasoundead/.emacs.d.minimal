@@ -324,7 +324,7 @@ buffer where knowing the current project directory is important."
             (all-the-icons-octicon
              "file-directory"
              :face face
-             ;; :v-adjust -0.05
+             :v-adjust -0.05
              :height 0.95)
             (propertize (concat " " (abbreviate-file-name default-directory))
                         'face face))))
@@ -360,7 +360,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                          " ")))
           (if buffer-file-name
               (+sea-modeline-buffer-file-name)
-            "%b")))
+            ;; "%b"
+            "%b")
+          ))
 
 ;;
 (def-modeline-segment! buffer-info-simple
@@ -600,8 +602,8 @@ Returns \"\" to not break --no-window-system."
 ;;
 
 (def-modeline! main
-  (bar matches " " buffer-info " %l:%c %p " selection-info)
-  ;; (bar matches " " buffer-info "  %l:%c %p  " selection-info)
+  ;; (bar matches " " buffer-info " %l:%c %p " selection-info)
+  (bar matches buffer-info)
   (buffer-encoding major-mode vcs))
 
 (def-modeline! minimal
@@ -609,7 +611,7 @@ Returns \"\" to not break --no-window-system."
   (media-info major-mode))
 
 (def-modeline! special
-  (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
+  (bar matches " " buffer-info "  %l:%c %p  " selection-info)
   (buffer-encoding major-mode))
 
 (def-modeline! project
@@ -618,7 +620,7 @@ Returns \"\" to not break --no-window-system."
 
 (def-modeline! media
   (bar " %b  ")
-  (media-info major-mode))
+  ( major-mode))
 
 ;;
 ;; Hooks

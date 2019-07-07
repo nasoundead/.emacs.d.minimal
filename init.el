@@ -96,6 +96,7 @@ Use this for files that change often, like cache files.")
 ;; (require 'init-rust)
 (require 'init-go)
 (require 'init-python)
+(require 'init-web)
 
 ;; Start server
 (require 'server)

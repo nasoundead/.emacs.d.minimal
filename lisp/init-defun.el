@@ -162,8 +162,8 @@ If NOCACHE, don't fetch a cached answer."
 If NOCACHE, don't fetch a cached answer."
   (if nocache
       (without-project-cache! (sea-project-root nil))
-    (let (projectile-require-project-root)
-      (projectile-project-root))))
+    (let ((projectile-require-project-root t))
+      (or (projectile-project-root) default-directory))))
 
 ;;;###autoload
 (defalias 'sea-project-expand #'projectile-expand-root)
