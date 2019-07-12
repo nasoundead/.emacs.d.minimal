@@ -115,7 +115,7 @@
 
 (use-package avy
   :bind
-  ("C-'" . avy-goto-char))
+  ("C-:" . avy-goto-char-2))
 
 (use-package hydra)
 
@@ -133,9 +133,9 @@
 ;; Minibuffer
 ;; You use the minibuffer to enter a new search term.
 ;; You can also reuse a previous search term with M-p in the minibuffer. To edit the default search term, use M-n.
-(use-package deadgrep
-  :init
-  (global-set-key (kbd "<f3>") #'deadgrep))
+;; (use-package deadgrep
+;;   :init
+;;   (global-set-key (kbd "<f3>") #'deadgrep))
 
 
 (use-package visual-regexp

@@ -24,12 +24,13 @@
   ;; (set-face-attribute 'default nil :font "DejaVu Sans Mono 11")
   ;; (set-face-attribute 'default nil :font "Inconsolata 12")
   ;; (set-face-attribute 'default nil :font "Fantasque Sans Mono 12")
+  ;; (set-face-attribute 'default nil :font "Iosevka 12")
   (set-face-attribute 'default nil :font "Fira Code 12")
   ;; Setting Chinese Font
-  ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
-  ;;   (set-fontset-font (frame-parameter nil 'font)
-  ;;                     charset
-  ;;                     (font-spec :family "Microsoft Yahei" :size 16)))
+  (dolist (charset '(kana han symbol cjk-misc bopomofo))
+    (set-fontset-font (frame-parameter nil 'font)
+                      charset
+                      (font-spec :family "Microsoft Yahei")))
   (when IS-WIN
     (set-fontset-font "fontset-default" 'chinese-gbk "Microsoft Yahei")
     (setq face-font-rescale-alist '(("宋体" . 1.0)
@@ -44,13 +45,14 @@
 
 (setq custom-safe-themes t)
 (require 'sea-theme)
-;; (use-package spacemacs-theme)
-;; (use-package color-theme-sanityinc-tomorrow)
-;; (use-package doom-themes)
+(use-package spacemacs-theme)
+(use-package color-theme-sanityinc-tomorrow)
+(use-package doom-themes)
 ;; (use-package zenburn-theme)
 
 ;; (setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
 ;; (setq-default custom-enabled-themes '(doom-one))
+(setq-default custom-enabled-themes '(doom-molokai))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()

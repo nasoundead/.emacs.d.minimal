@@ -51,48 +51,24 @@
   (add-to-list 'org-export-backends 'md)
   (add-to-list 'ispell-skip-region-alist '("^#+begin_src" . "^#+end_src"))
 
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-  (let* ((variable-tuple
-          (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                ((x-list-fonts "Verdana")         '(:font "Verdana"))
-                ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-         (base-font-color     (face-foreground 'default nil 'default))
-         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+  ;; (custom-theme-set-faces
+  ;;  'user
+  ;;  '(variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
+  ;;  '(fixed-pitch ((t ( :family "Inconsolata" :slant normal :weight normal :height 1.0 :width normal)))))
 
-    (custom-theme-set-faces
-     'user
-     `(org-level-8 ((t (,@headline ,@variable-tuple))))
-     `(org-level-7 ((t (,@headline ,@variable-tuple))))
-     `(org-level-6 ((t (,@headline ,@variable-tuple))))
-     `(org-level-5 ((t (,@headline ,@variable-tuple))))
-     `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-     `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-     `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-     `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
-
-  (custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
-   '(fixed-pitch ((t ( :family "Inconsolata" :slant normal :weight normal :height 1.0 :width normal)))))
-
-  (custom-theme-set-faces
-   'user
-   '(org-block                 ((t (:inherit fixed-pitch))))
-   '(org-document-info         ((t (:foreground "dark orange"))))
-   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-   '(org-link                  ((t (:foreground "royal blue" :underline t))))
-   '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-property-value        ((t (:inherit fixed-pitch))) t)
-   '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-   '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
-   '(org-indent                ((t (:inherit (org-hide fixed-pitch))))))
+  ;; (custom-theme-set-faces
+  ;;  'user
+  ;;  '(org-block                 ((t (:inherit fixed-pitch))))
+  ;;  '(org-document-info         ((t (:foreground "dark orange"))))
+  ;;  '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+  ;;  '(org-link                  ((t (:foreground "royal blue" :underline t))))
+  ;;  '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+  ;;  '(org-property-value        ((t (:inherit fixed-pitch))) t)
+  ;;  '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+  ;;  '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+  ;;  '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
+  ;;  '(org-indent                ((t (:inherit (org-hide fixed-pitch))))))
 
   (add-hook 'org-mode-hook 'variable-pitch-mode)
   (add-hook 'org-mode-hook 'visual-line-mode)
@@ -133,9 +109,9 @@
 
 
 
-(add-hook 'org-babel-after-execute-hook 'naso/display-inline-images 'append)
+(add-hook 'org-babel-after-execute-hook 'sea/display-inline-images 'append)
 (add-hook 'org-mode-hook '(lambda ()(setq truncate-lines t)) 'append)
-(defun naso/display-inline-images ()
+(defun sea/display-inline-images ()
   (condition-case nil
       (org-display-inline-images)
     (error nil)))
@@ -247,6 +223,32 @@
     (setq org-plantuml-jar-path (expand-file-name jar-name sea-etc-dir))
     (unless (file-exists-p org-plantuml-jar-path)
       (url-copy-file url org-plantuml-jar-path))))
+
+
+
+(let ((jar-name "Clip.jar")
+      (url "https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.13/sbt-launch.jar"))
+  (setq org-clip-jar-path (expand-file-name jar-name sea-etc-dir))
+  (unless (file-exists-p org-clip-jar-path)
+    (url-copy-file url org-clip-jar-path)))
+
+(defun org-paste-image ()
+  (interactive)
+  (let* ((dir (read-directory-name "Dir: ")))
+    (insert
+     (org-make-link-string
+      (concat "file:"
+              (shell-command-to-string
+               (mapconcat #'identity
+                          `("java"
+                            "-jar"
+                            ,(expand-file-name org-clip-jar-path)
+                            "--uuid"
+                            ,(file-relative-name dir default-directory)
+                            )
+                          " "
+                          )))))))
+
 
 (use-package plantuml-mode
   :init
