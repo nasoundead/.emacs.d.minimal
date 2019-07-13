@@ -224,13 +224,14 @@
     (unless (file-exists-p org-plantuml-jar-path)
       (url-copy-file url org-plantuml-jar-path))))
 
-
-
-(let ((jar-name "Clip.jar")
-      (url "https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.13/sbt-launch.jar"))
-  (setq org-clip-jar-path (expand-file-name jar-name sea-etc-dir))
-  (unless (file-exists-p org-clip-jar-path)
-    (url-copy-file url org-clip-jar-path)))
+(defun sea/download-clip()
+  "Download Clip.jar to etc dir"
+  (let ((jar-name "Clip.jar")
+        (url "https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.13/sbt-launch.jar"))
+    (setq org-clip-jar-path (expand-file-name jar-name sea-etc-dir))
+    (unless (file-exists-p org-clip-jar-path)
+      (url-copy-file url org-clip-jar-path))))
+(add-hook 'org-mode-hook 'sea/download-clip)
 
 (defun org-paste-image ()
   (interactive)

@@ -25,19 +25,40 @@
   ;; (set-face-attribute 'default nil :font "Inconsolata 12")
   ;; (set-face-attribute 'default nil :font "Fantasque Sans Mono 12")
   ;; (set-face-attribute 'default nil :font "Iosevka 12")
-  (set-face-attribute 'default nil :font "Fira Code 12")
+  ;; (set-face-attribute 'default nil :font "Fira Code 12")
   ;; Setting Chinese Font
+  ;; (dolist (charset '(kana han symbol cjk-misc bopomofo))
+  ;;   (set-fontset-font (frame-parameter nil 'font)
+  ;;                     charset
+  ;;                     (font-spec :family "Microsoft Yahei")))
+  ;; (when IS-WIN
+  ;;   ;; (set-fontset-font "fontset-default" 'chinese-gbk "WenQuanyi Micro Hei Mono")
+  ;;   ;; (set-fontset-font "fontset-default" 'chinese-gbk "Microsoft Yahei")
+  ;;   (setq face-font-rescale-alist '(("宋体" . 1.0)
+  ;;                                   ("微软雅黑" . 1.0)
+  ;;                                   ("Microsoft Yahei" . 1.0)
+  ;;                                   ("FangSong" . 1.4)
+  ;;                                   ("WenQuanyi Micro Hei Mono" . 1.0)
+  ;;                                   )))
+
+  (setq fonts
+        (cond ((eq system-type 'darwin)     '("Monaco"    "STHeiti"))
+              ((eq system-type 'gnu/linux)  '("Menlo"     "WenQuanYi Zen Hei"))
+              ((eq system-type 'windows-nt) '("Consolas"  "Microsoft Yahei"))))
+  (set-face-attribute 'default nil :font
+                      (format "%s:pixelsize=%d" (car fonts) 14))
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
-    (set-fontset-font (frame-parameter nil 'font)
-                      charset
-                      (font-spec :family "Microsoft Yahei")))
-  (when IS-WIN
-    (set-fontset-font "fontset-default" 'chinese-gbk "Microsoft Yahei")
-    (setq face-font-rescale-alist '(("宋体" . 1.0)
-                                    ("微软雅黑" . 1.0)
-                                    ("Microsoft Yahei" . 1.0)
-                                    ("FangSong" . 1.4)
-                                    )))
+    (set-fontset-font (frame-parameter nil 'font) charset
+                      (font-spec :family (car (cdr fonts)))))
+  ;; Fix chinese font width and rescale
+  (setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("WenQuanYi Micro Hei Mono" . 1.2) ("STHeiti". 1.2)))
+
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-table ((t (:foreground "#6c71c4" :family "Ubuntu Mono")))))
 
   (require 'font-lock+)
   (run-hooks 'sea-init-ui-hook))
@@ -52,7 +73,7 @@
 
 ;; (setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
 ;; (setq-default custom-enabled-themes '(doom-one))
-(setq-default custom-enabled-themes '(doom-molokai))
+;; (setq-default custom-enabled-themes '(doom-molokai))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()
