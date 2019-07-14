@@ -32,9 +32,9 @@
 (cond
  ((eq system-type 'windows-nt)
   ;; (set-language-environment "chinese-gbk")
-  (set-language-environment 'utf-8)
-  (setq locale-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
+  ;; (set-language-environment 'utf-8)
+  ;; (setq locale-coding-system 'utf-8)
+  ;; (set-default-coding-systems 'utf-8)
   (prefer-coding-system 'utf-8)
   (set-terminal-coding-system 'gbk)
   (modify-coding-system-alist 'process "*" 'gbk)
