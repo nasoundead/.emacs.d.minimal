@@ -106,35 +106,39 @@
   :bind (([remap move-beginning-of-line] . mwim-beginning-of-code-or-line)
          ([remap move-end-of-line]       . mwim-end-of-code-or-line)))
 
-(use-package color-rg
-  :ensure t
-  :quelpa (color-rg :fetcher github :repo "manateelazycat/color-rg")
+(use-package rg
   :init
-  (define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
-  (global-set-key (kbd "M-s r") 'sea/color-rg-search-input)
-  (require 'color-rg)
-  :config
-  (defun sea/color-rg-search-input (&optional keyword directory files)
-    ;; Save window configuration before do search.
-    ;; Just save when `color-rg-window-configuration-before-search' is nil
-    ;; Or current buffer is not `color-rg-buffer' (that mean user not quit color-rg and search again in other place).
-    (interactive)
-    (when (or (not color-rg-window-configuration-before-search)
-              (not (string-equal (buffer-name) color-rg-buffer)))
-      (setq color-rg-window-configuration-before-search (current-window-configuration))
-      (setq color-rg-buffer-point-before-search (point)))
-    ;; Set `enable-local-variables' to :safe, avoid emacs ask annoyingly question when open file by color-rg.
-    (setq enable-local-variables :safe)
-    ;; Search.
-    (let* ((search-keyboard
-            (or keyword
-                (color-rg-read-input)))
-           (search-directory
-            (read-directory-name "Dir: " default-directory))
-           (search-files
-            (or files
-                "everything")))
-      (color-rg-search search-keyboard search-directory search-files))))
+  (rg-enable-default-bindings "\M-s"))
+
+;; (use-package color-rg
+;;   :ensure t
+;;   :quelpa (color-rg :fetcher github :repo "manateelazycat/color-rg")
+;;   :init
+;;   (define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
+;;   (global-set-key (kbd "M-s r") 'sea/color-rg-search-input)
+;;   (require 'color-rg)
+;;   :config
+;;   (defun sea/color-rg-search-input (&optional keyword directory files)
+;;     ;; Save window configuration before do search.
+;;     ;; Just save when `color-rg-window-configuration-before-search' is nil
+;;     ;; Or current buffer is not `color-rg-buffer' (that mean user not quit color-rg and search again in other place).
+;;     (interactive)
+;;     (when (or (not color-rg-window-configuration-before-search)
+;;               (not (string-equal (buffer-name) color-rg-buffer)))
+;;       (setq color-rg-window-configuration-before-search (current-window-configuration))
+;;       (setq color-rg-buffer-point-before-search (point)))
+;;     ;; Set `enable-local-variables' to :safe, avoid emacs ask annoyingly question when open file by color-rg.
+;;     (setq enable-local-variables :safe)
+;;     ;; Search.
+;;     (let* ((search-keyboard
+;;             (or keyword
+;;                 (color-rg-read-input)))
+;;            (search-directory
+;;             (read-directory-name "Dir: " default-directory))
+;;            (search-files
+;;             (or files
+;;                 "everything")))
+;;       (color-rg-search search-keyboard search-directory search-files))))
 
 (use-package aggressive-indent
   :init
