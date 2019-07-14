@@ -53,12 +53,12 @@
    "C-c C-r"    #'ivy-resume)
   )
 
-(use-package swiper
-  :commands (swiper swiper-all)
-  :bind
-  (("C-s" . swiper)
-   ("C-S-s". swiper-all)
-   ("C-M-s" . isearch-forward)))
+;; (use-package swiper
+;;   :commands (swiper swiper-all)
+;;   :bind
+;;   (("C-s" . swiper)
+;;    ("C-S-s". swiper-all)
+;;    ("C-M-s" . isearch-forward)))
 (use-package counsel
   :diminish
   :config

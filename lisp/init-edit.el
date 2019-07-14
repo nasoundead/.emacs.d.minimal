@@ -119,24 +119,19 @@
 
 (use-package hydra)
 
-;; Keybindings
-;; Key	Action
-;; RET	Visit the result, file or push button at point
-;; o	Visit the result in another window
-;; n and p	Move between results or buttons
-;; N and P	Move between search hits
-;; g	Re-run the search
-;; TAB	Expand/collapse results for a file
-;; C-c C-k	Stop a running search
-;; C-u	A prefix argument prevents searches from starting automatically.
-;; You can also use M-x imenu to move between files in a results buffer.
-;; Minibuffer
-;; You use the minibuffer to enter a new search term.
-;; You can also reuse a previous search term with M-p in the minibuffer. To edit the default search term, use M-n.
-;; (use-package deadgrep
-;;   :init
-;;   (global-set-key (kbd "<f3>") #'deadgrep))
-
+(defun occur-dwim ()
+  "Call `occur' with a sane default."
+  (interactive)
+  (push (if (region-active-p)
+            (buffer-substring-no-properties
+             (region-beginning)
+             (region-end))
+          (let ((sym (thing-at-point 'symbol)))
+            (when (stringp sym)
+              (regexp-quote sym))))
+        regexp-history)
+  (call-interactively 'occur))
+(global-set-key (kbd "M-s o") 'occur-dwim)
 
 (use-package visual-regexp
   :init
