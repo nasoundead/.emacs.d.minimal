@@ -44,7 +44,7 @@
   (setq fonts
         (cond ((eq system-type 'darwin)     '("Monaco"    "STHeiti"))
               ((eq system-type 'gnu/linux)  '("Menlo"     "WenQuanYi Micro Hei Mono"))
-              ((eq system-type 'windows-nt) '("Ubuntu Mono"  "Microsoft Yahei"))))
+              ((eq system-type 'windows-nt) '("Fira Code"  "Microsoft Yahei"))))
   (set-face-attribute 'default nil :font
                       (format "%s:pixelsize=%d" (car fonts) 14))
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
@@ -53,12 +53,12 @@
   ;; Fix chinese font width and rescale
   (setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("WenQuanYi Micro Hei Mono" . 1.2) ("STHeiti". 1.2)))
 
-  (;; custom-set-faces
-   ;; ;; custom-set-faces was added by Custom.
-   ;; ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; ;; Your init file should contain only one such instance.
-   ;; ;; If there is more than one, they won't work right.
-   ;; '(org-table ((t (:foreground "#6c71c4" :family "Ubuntu Mono"))))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-table ((t (:foreground "#6c71c4" :family "Ubuntu Mono"))))
    )
 
   (require 'font-lock+)
