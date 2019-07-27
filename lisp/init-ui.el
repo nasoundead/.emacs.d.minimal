@@ -73,7 +73,7 @@
 ;; (use-package zenburn-theme)
 
 ;; (setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
-;; (setq-default custom-enabled-themes '(doom-one))
+(setq-default custom-enabled-themes '(doom-one))
 ;; (setq-default custom-enabled-themes '(doom-molokai))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
 ;; Ensure that themes will be applied even if they have not been customized
