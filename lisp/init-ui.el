@@ -44,9 +44,9 @@
   (setq fonts
         (cond ((eq system-type 'darwin)     '("Monaco"    "STHeiti"))
               ((eq system-type 'gnu/linux)  '("Menlo"     "WenQuanYi Micro Hei Mono"))
-              ((eq system-type 'windows-nt) '("Fira Code"  "Microsoft Yahei"))))
+              ((eq system-type 'windows-nt) '("Source Code Pro"  "Microsoft Yahei"))))
   (set-face-attribute 'default nil :font
-                      (format "%s:pixelsize=%d" (car fonts) 14))
+                      (format "%s:pixelsize=%d" (car fonts) 15))
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font) charset
                       (font-spec :family (car (cdr fonts)))))
@@ -70,10 +70,12 @@
 (use-package spacemacs-theme)
 (use-package color-theme-sanityinc-tomorrow)
 (use-package doom-themes)
-;; (use-package zenburn-theme)
+(use-package darktooth-theme)
+(use-package zenburn-theme)
 
 ;; (setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
-(setq-default custom-enabled-themes '(doom-one))
+;; (setq-default custom-enabled-themes '(doom-one))
+(setq-default custom-enabled-themes '(darktooth))
 ;; (setq-default custom-enabled-themes '(doom-molokai))
 ;; (setq-default custom-enabled-themes '(spacemacs-dark))
 ;; Ensure that themes will be applied even if they have not been customized
@@ -124,9 +126,7 @@
                                 "*Help*"
                                 "*cvs*"
                                 "*Buffer List*"
-                                "*Ibuffer*"
-                                "*esh command on file*")))
-
+                                "*Ibuffer*" "*esh command on file*")))
 
 (use-package windmove
   :ensure nil
