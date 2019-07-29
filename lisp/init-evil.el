@@ -145,4 +145,11 @@
   (evil-vimish-fold-mode 1)
   :ensure t)
 
+
+(use-package evil-easymotion
+  :defer t
+  :ensure t
+  :init
+  (evilem-default-keybindings "SPC"))
+
 (provide 'init-evil)
