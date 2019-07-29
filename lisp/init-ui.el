@@ -44,9 +44,9 @@
   (setq fonts
         (cond ((eq system-type 'darwin)     '("Monaco"    "STHeiti"))
               ((eq system-type 'gnu/linux)  '("Menlo"     "WenQuanYi Micro Hei Mono"))
-              ((eq system-type 'windows-nt) '("Source Code Pro"  "Microsoft Yahei"))))
+              ((eq system-type 'windows-nt) '("Fira Code"  "Microsoft Yahei"))))
   (set-face-attribute 'default nil :font
-                      (format "%s:pixelsize=%d" (car fonts) 15))
+                      (format "%s:pixelsize=%d" (car fonts) 14))
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font) charset
                       (font-spec :family (car (cdr fonts)))))

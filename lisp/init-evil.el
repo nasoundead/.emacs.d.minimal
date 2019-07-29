@@ -123,11 +123,13 @@
 
 (use-package evil-mc
   :init
-  (defvar evil-mc-key-map (make-sparse-keymap))
+  (global-evil-mc-mode 1)
   :config
-  (global-evil-mc-mode +1)
   ;; disable evil-escape in evil-mc; causes unwanted text on invocation
   (push 'evil-escape-mode evil-mc-incompatible-minor-modes)
+  (evil-define-key 'visual evil-mc-key-map
+    "A" #'evil-mc-make-cursor-in-visual-selection-end
+    "I" #'evil-mc-make-cursor-in-visual-selection-beg)
   )
 
 (use-package evil-surround
@@ -137,5 +139,10 @@
   :ensure t)
 
 
+(use-package evil-vimish-fold
+  :defer t
+  :init
+  (evil-vimish-fold-mode 1)
+  :ensure t)
 
 (provide 'init-evil)

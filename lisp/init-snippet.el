@@ -21,13 +21,12 @@
 (use-package ivy-yasnippet
   :ensure t)
 
-(use-package auto-yasnippet
-  :ensure t
-  :after yasnippet
-  :config
-  (global-set-key (kbd "H-w") #'aya-create)
-  (global-set-key (kbd "H-y") #'aya-expand)
-
-  )
+;; (use-package auto-yasnippet
+;;   :ensure t
+;;   :after yasnippet
+;;   :config
+;;   (global-set-key (kbd "H-w") #'aya-create)
+;;   (global-set-key (kbd "H-y") #'aya-expand)
+;;   )
 
 (provide 'init-snippet)

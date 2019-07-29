@@ -3,9 +3,9 @@
 ;;; Code:
 
 ;; Kill & Mark things easily
-(use-package easy-kill
-  :bind (([remap kill-ring-save] . easy-kill)
-         ([remap mark-sexp] . easy-mark)))
+;; (use-package easy-kill
+;;   :bind (([remap kill-ring-save] . easy-kill)
+;;          ([remap mark-sexp] . easy-mark)))
 ;; Interactively insert items from kill-ring
 (use-package browse-kill-ring
   :init (add-hook 'after-init-hook #'browse-kill-ring-default-keybindings))
@@ -62,31 +62,31 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 ;; Multiple cursors
-(use-package multiple-cursors
-  :bind (("C-M-L"   . mc/mark-all-dwim)
-         ("C->"           . mc/mark-next-like-this)
-         ("C-<"           . mc/mark-previous-like-this)
-         ("C-c C-<"       . mc/mark-all-like-this)
-         ("C-M->"         . mc/skip-to-next-like-this)
-         ("C-M-<"         . mc/skip-to-previous-like-this)
-         ("s-<mouse-1>"   . mc/add-cursor-on-click)
-         ("C-S-<mouse-1>" . mc/add-cursor-on-click)
-         :map mc/keymap
-         ("C-|" . mc/vertical-align-with-space)))
+;; (use-package multiple-cursors
+;;   :bind (("C-M-L"   . mc/mark-all-dwim)
+;;          ("C->"           . mc/mark-next-like-this)
+;;          ("C-<"           . mc/mark-previous-like-this)
+;;          ("C-c C-<"       . mc/mark-all-like-this)
+;;          ("C-M->"         . mc/skip-to-next-like-this)
+;;          ("C-M-<"         . mc/skip-to-previous-like-this)
+;;          ("s-<mouse-1>"   . mc/add-cursor-on-click)
+;;          ("C-S-<mouse-1>" . mc/add-cursor-on-click)
+;;          :map mc/keymap
+;;          ("C-|" . mc/vertical-align-with-space)))
 ;; Smartly select region, rectangle, multi cursors
-(use-package smart-region
-  :hook (after-init . smart-region-on))
+;; (use-package smart-region
+;;   :hook (after-init . smart-region-on))
 ;; An all-in-one comment command to rule them all
 (use-package comment-dwim-2
   :bind ("M-;" . comment-dwim-2))
 ;; Drag stuff (lines, words, region, etc...) around
-(use-package drag-stuff
-  :diminish
-  :commands drag-stuff-define-keys
-  :hook (after-init . drag-stuff-global-mode)
-  :config
-  (add-to-list 'drag-stuff-except-modes 'org-mode)
-  (drag-stuff-define-keys))
+;; (use-package drag-stuff
+;;   :diminish
+;;   :commands drag-stuff-define-keys
+;;   :hook (after-init . drag-stuff-global-mode)
+;;   :config
+;;   (add-to-list 'drag-stuff-except-modes 'org-mode)
+;;   (drag-stuff-define-keys))
 ;; Hungry deletion
 (use-package hungry-delete
   :diminish
@@ -94,13 +94,7 @@
   :config (setq-default hungry-delete-chars-to-skip " \t\f\v"))
 ;; Framework for mode-specific buffer indexes
 ;; Drag stuff (lines, words, region, etc...) around
-(use-package drag-stuff
-  :diminish
-  :commands drag-stuff-define-keys
-  :hook (after-init . drag-stuff-global-mode)
-  :config
-  (add-to-list 'drag-stuff-except-modes 'org-mode)
-  (drag-stuff-define-keys))
+
 ;; Move to the beginning/end of line or code
 (use-package mwim
   :bind (([remap move-beginning-of-line] . mwim-beginning-of-code-or-line)
@@ -145,9 +139,9 @@
   (dolist (hook '(emacs-lisp-mode-hook css-mode-hook))
     (add-hook hook #'aggressive-indent-mode)))
 
-(use-package avy
-  :bind
-  ("C-:" . avy-goto-word-0))
+;; (use-package avy
+;;   :bind
+;;   ("C-:" . avy-goto-word-0))
 
 (use-package hydra)
 
