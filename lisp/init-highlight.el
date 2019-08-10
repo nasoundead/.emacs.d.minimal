@@ -36,15 +36,15 @@
   (symbol-overlay-face-7 ((t (:inherit 'success :inverse-video t))))
   (symbol-overlay-face-8 ((t (:inherit 'dired-symlink :inverse-video t :bold nil))))
   :bind (([C-f3] . symbol-overlay-put)
-	 ([f3] . symbol-overlay-jump-next)
-	 ([S-f3] . symbol-overlay-jump-prev)
-	 ;; ("M-N" . symbol-overlay-switch-forward)
-	 ;; ("M-P" . symbol-overlay-switch-backward)
-	 ;; ("M-C" . symbol-overlay-remove-all)
-	 ([M-f3] . symbol-overlay-remove-all))
+         ([f3] . symbol-overlay-jump-next)
+         ([S-f3] . symbol-overlay-jump-prev)
+         ;; ("M-N" . symbol-overlay-switch-forward)
+         ;; ("M-P" . symbol-overlay-switch-backward)
+         ;; ("M-C" . symbol-overlay-remove-all)
+         ([M-f3] . symbol-overlay-remove-all))
   :hook ((prog-mode . symbol-overlay-mode)
-	 (iedit-mode . (lambda () (symbol-overlay-mode -1)))
-	 (iedit-mode-end . symbol-overlay-mode))
+         (iedit-mode . (lambda () (symbol-overlay-mode -1)))
+         (iedit-mode-end . symbol-overlay-mode))
   :init (setq symbol-overlay-idle-time 0.01))
 
 ;; Colorize color names in buffers
@@ -60,10 +60,10 @@
 (use-package hl-todo
   :custom-face (hl-todo ((t (:box t :bold t))))
   :bind (:map hl-todo-mode-map
-	      ([C-S-f3] . hl-todo-occur)
-	      ("C-c t p" . hl-todo-previous)
-	      ("C-c t n" . hl-todo-next)
-	      ("C-c t o" . hl-todo-occur))
+              ([C-S-f3] . hl-todo-occur)
+              ("C-c t p" . hl-todo-previous)
+              ("C-c t n" . hl-todo-next)
+              ("C-c t o" . hl-todo-occur))
   :hook (after-init . global-hl-todo-mode)
   :config
   (dolist (keyword '("BUG" "DEFECT" "ISSUE"))
@@ -79,12 +79,12 @@
   (diff-hl-delete ((t (:background "#ff6c6b"))))
   (diff-hl-insert ((t (:background "#98be65"))))
   :bind (:map diff-hl-command-map
-	      ("SPC" . diff-hl-mark-hunk))
+              ("SPC" . diff-hl-mark-hunk))
   :hook ((after-init . global-diff-hl-mode)
-	 (dired-mode . diff-hl-dired-mode))
+         (dired-mode . diff-hl-dired-mode))
   :config
   ;; Highlight on-the-fly
-  (diff-hl-flydiff-mode 1)
+  ;; (diff-hl-flydiff-mode 1)
 
   ;; Set fringe style
   (setq diff-hl-draw-borders nil)
@@ -96,7 +96,7 @@
     ;; Avoid restoring `diff-hl-margin-mode'
     (with-eval-after-load 'desktop
       (add-to-list 'desktop-minor-mode-table
-		   '(diff-hl-margin-mode nil))))
+                   '(diff-hl-margin-mode nil))))
 
   ;; Integration with magit
   (with-eval-after-load 'magit
@@ -113,8 +113,8 @@
   (setq whitespace-action '(auto-cleanup))
   ;; only show bad whitespace
   (setq whitespace-style '(face
-			   trailing space-before-tab
-			   indentation empty space-after-tab))
+                           trailing space-before-tab
+                           indentation empty space-after-tab))
 
   (with-eval-after-load 'popup
     ;; advice for whitespace-mode conflict with popup
@@ -124,15 +124,15 @@
     (defadvice popup-draw (before my-turn-off-whitespace activate compile)
       "Turn off whitespace mode before showing autocomplete box."
       (if whitespace-mode
-	  (progn
-	    (setq my-prev-whitespace-mode t)
-	    (whitespace-mode -1))
-	(setq my-prev-whitespace-mode nil)))
+          (progn
+            (setq my-prev-whitespace-mode t)
+            (whitespace-mode -1))
+        (setq my-prev-whitespace-mode nil)))
 
     (defadvice popup-delete (after my-restore-whitespace activate compile)
       "Restore previous whitespace mode when deleting autocomplete box."
       (if my-prev-whitespace-mode
-	  (whitespace-mode 1)))))
+          (whitespace-mode 1)))))
 
 
 (provide 'init-highlight)

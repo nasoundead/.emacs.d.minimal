@@ -44,7 +44,7 @@
   (setq fonts
         (cond ((eq system-type 'darwin)     '("Monaco"    "STHeiti"))
               ((eq system-type 'gnu/linux)  '("Menlo"     "WenQuanYi Micro Hei Mono"))
-              ((eq system-type 'windows-nt) '("Fira Code"  "Microsoft Yahei"))))
+              ((eq system-type 'windows-nt) '("Iosevka"  "Microsoft Yahei"))))
   (set-face-attribute 'default nil :font
                       (format "%s:pixelsize=%d" (car fonts) 14))
   (dolist (charset '(kana han symbol cjk-misc bopomofo))
@@ -58,7 +58,7 @@
    ;; If you edit it by hand, you could mess it up, so be careful.
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
-   '(org-table ((t (:foreground "#6c71c4" :family "Ubuntu Mono"))))
+   '(org-table ((t (:family "Ubuntu Mono"))))
    )
 
   (require 'font-lock+)
@@ -66,18 +66,15 @@
 (add-hook 'after-init-hook #'sea/init-ui)
 
 (setq custom-safe-themes t)
-(require 'sea-theme)
-(use-package spacemacs-theme)
-(use-package color-theme-sanityinc-tomorrow)
-(use-package doom-themes)
+;; (require 'sea-theme)
+;; (use-package spacemacs-theme)
+;; (use-package color-theme-sanityinc-tomorrow)
+;; (use-package doom-themes)
+(use-package srcery-theme)
 (use-package darktooth-theme)
-(use-package zenburn-theme)
+;; (use-package zenburn-theme)
 
-;; (setq-default custom-enabled-themes '(sanityinc-tomorrow-bright))
-;; (setq-default custom-enabled-themes '(doom-one))
-(setq-default custom-enabled-themes '(darktooth))
-;; (setq-default custom-enabled-themes '(doom-molokai))
-;; (setq-default custom-enabled-themes '(spacemacs-dark))
+;; (setq-default custom-enabled-themes '(darktooth))
 ;; Ensure that themes will be applied even if they have not been customized
 (defun reapply-themes ()
   "Forcibly load the themes listed in `custom-enabled-themes'."
@@ -90,24 +87,6 @@
   "Activate a light color theme."
   (interactive)
   (setq custom-enabled-themes '(leuven))
-  (reapply-themes))
-
-(defun light ()
-  "Activate a light color theme."
-  (interactive)
-  (setq custom-enabled-themes '(sea))
-  (reapply-themes))
-
-(defun sanityinc-light ()
-  "Activate a light color theme."
-  (interactive)
-  (setq custom-enabled-themes '(sanityinc-tomorrow-day))
-  (reapply-themes))
-
-(defun sanityinc-dark ()
-  "Activate a dark color theme."
-  (interactive)
-  (setq custom-enabled-themes '(sanityinc-tomorrow-bright))
   (reapply-themes))
 
 ;; Restore old window configurations
