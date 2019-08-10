@@ -2,10 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Kill & Mark things easily
-;; (use-package easy-kill
-;;   :bind (([remap kill-ring-save] . easy-kill)
-;;          ([remap mark-sexp] . easy-mark)))
 ;; Interactively insert items from kill-ring
 (use-package browse-kill-ring
   :init (add-hook 'after-init-hook #'browse-kill-ring-default-keybindings))
@@ -79,14 +75,6 @@
 ;; An all-in-one comment command to rule them all
 (use-package comment-dwim-2
   :bind ("M-;" . comment-dwim-2))
-;; Drag stuff (lines, words, region, etc...) around
-;; (use-package drag-stuff
-;;   :diminish
-;;   :commands drag-stuff-define-keys
-;;   :hook (after-init . drag-stuff-global-mode)
-;;   :config
-;;   (add-to-list 'drag-stuff-except-modes 'org-mode)
-;;   (drag-stuff-define-keys))
 ;; Hungry deletion
 (use-package hungry-delete
   :diminish
@@ -104,44 +92,11 @@
   :init
   (rg-enable-default-bindings "\M-s"))
 
-;; (use-package color-rg
-;;   :ensure t
-;;   :quelpa (color-rg :fetcher github :repo "manateelazycat/color-rg")
-;;   :init
-;;   (define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
-;;   (global-set-key (kbd "M-s r") 'sea/color-rg-search-input)
-;;   (require 'color-rg)
-;;   :config
-;;   (defun sea/color-rg-search-input (&optional keyword directory files)
-;;     ;; Save window configuration before do search.
-;;     ;; Just save when `color-rg-window-configuration-before-search' is nil
-;;     ;; Or current buffer is not `color-rg-buffer' (that mean user not quit color-rg and search again in other place).
-;;     (interactive)
-;;     (when (or (not color-rg-window-configuration-before-search)
-;;               (not (string-equal (buffer-name) color-rg-buffer)))
-;;       (setq color-rg-window-configuration-before-search (current-window-configuration))
-;;       (setq color-rg-buffer-point-before-search (point)))
-;;     ;; Set `enable-local-variables' to :safe, avoid emacs ask annoyingly question when open file by color-rg.
-;;     (setq enable-local-variables :safe)
-;;     ;; Search.
-;;     (let* ((search-keyboard
-;;             (or keyword
-;;                 (color-rg-read-input)))
-;;            (search-directory
-;;             (read-directory-name "Dir: " default-directory))
-;;            (search-files
-;;             (or files
-;;                 "everything")))
-;;       (color-rg-search search-keyboard search-directory search-files))))
 
 (use-package aggressive-indent
   :init
   (dolist (hook '(emacs-lisp-mode-hook css-mode-hook))
     (add-hook hook #'aggressive-indent-mode)))
-
-;; (use-package avy
-;;   :bind
-;;   ("C-:" . avy-goto-word-0))
 
 (use-package hydra)
 
