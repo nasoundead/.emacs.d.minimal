@@ -76,10 +76,6 @@
     (setq mode-line-format nil))
   )
 
-(use-package lsp-java :ensure t :after lsp
-  :config (add-hook 'java-mode-hook 'lsp))
-
-
 ;; Debug
 (use-package dap-mode
   :diminish
@@ -108,12 +104,14 @@
 (use-package lsp-python-ms
   :hook (python-mode . (lambda ()
                          (require 'lsp-python-ms)
-                         (lsp-deferred))))
+                         (lsp))))
 ;; Java support
 (use-package lsp-java
+  :config
+  (setq lsp-java-server-install-dir (concat sea-etc-dir "eclipace.jdt.ls/server/"))
   :hook (java-mode . (lambda ()
                        (require 'lsp-java)
-                       (lsp-deferred))))
+                       (lsp))))
 ;; C/C++/Objective-C support
 (use-package ccls
   :defines projectile-project-root-files-top-down-recurring
