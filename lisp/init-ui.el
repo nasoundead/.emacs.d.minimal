@@ -107,6 +107,10 @@
                                 "*Buffer List*"
                                 "*Ibuffer*" "*esh command on file*")))
 
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode))
+
 (use-package windmove
   :ensure nil
   :init (add-hook 'sea-init-ui-hook #'windmove-default-keybindings))
