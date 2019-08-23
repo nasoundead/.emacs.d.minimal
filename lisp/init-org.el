@@ -1,4 +1,4 @@
-;; init-go.el --- Initialize Golang configurations.	-*- lexical-binding: t -*-
+;; init-go.el --- Initialize Golang configurations.     -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2019 WangHaibo
 
@@ -40,10 +40,10 @@
   (setq org-hide-emphasis-markers t)
   ;; Editing
   (setq org-list-allow-alphabetical t
-        org-highlight-latex-and-related '(latex)
-        org-babel-results-keyword "results" ;; Display images directly in the buffer
-        org-confirm-babel-evaluate nil
-        org-startup-with-inline-images t)
+	org-highlight-latex-and-related '(latex)
+	org-babel-results-keyword "results" ;; Display images directly in the buffer
+	org-confirm-babel-evaluate nil
+	org-startup-with-inline-images t)
 
 
   ;; Activate spelling
@@ -87,25 +87,25 @@
 
   ;; Todo part
   (setq org-todo-keywords '((sequence
-                             "TODO(t)" "IN-PROGRESS(I)"  "|"
-                             "DONE(d)" "DEFERRED(f)" "CANCELLED(c@/!)")))
+			     "TODO(t)" "IN-PROGRESS(I)"  "|"
+			     "DONE(d)" "DEFERRED(f)" "CANCELLED(c@/!)")))
 
   ;; Priority definition
   (setq org-highest-priority ?A
-        org-lowest-priority ?E
-        org-default-priority ?C)
+	org-lowest-priority ?E
+	org-default-priority ?C)
 
   ;; Archiving
   (setq org-archive-mark-done t
-        org-log-done 'time
-        org-archive-location "%s_archive::* Archived Tasks")
+	org-log-done 'time
+	org-archive-location "%s_archive::* Archived Tasks")
 
   ;; Refiling
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3)))
-        org-completion-use-ido nil
-        org-refile-use-outline-path 'file
-        org-outline-path-complete-in-steps nil
-        org-refile-allow-creating-parent-nodes 'confirm))
+	org-completion-use-ido nil
+	org-refile-use-outline-path 'file
+	org-outline-path-complete-in-steps nil
+	org-refile-allow-creating-parent-nodes 'confirm))
 
 
 
@@ -124,11 +124,11 @@
     (outline-show-all)
     (goto-char (point-min))
     (if (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
-        (progn
-          (goto-char (point-min))
-          (while (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
-            (org-advertized-archive-subtree))
-          (message "Archive finished"))
+	(progn
+	  (goto-char (point-min))
+	  (while (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
+	    (org-advertized-archive-subtree))
+	  (message "Archive finished"))
       (message "No need to archive"))))
 
 
@@ -139,11 +139,11 @@
     (outline-show-all)
     (goto-char (point-min))
     (if (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
-        (progn
-          (goto-char (point-min))
-          (while (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
-            (org-cut-subtree))
-          (message "Cleaning DONE tasks finished"))
+	(progn
+	  (goto-char (point-min))
+	  (while (search-forward-regexp "^[\\*]+ \\(DONE\\|CANCELLED\\)" nil t)
+	    (org-cut-subtree))
+	  (message "Cleaning DONE tasks finished"))
       (message "No need to clean"))))
 
 ;; Calendar / Agenda
@@ -155,27 +155,27 @@
   (setq org-agenda-files '())
   (when (file-exists-p "~/Dropbox/org/todo/todo.org")
     (setq org-agenda-files
-          (append org-agenda-files '("~/Dropbox/org/todo/todo.org"))))
+	  (append org-agenda-files '("~/Dropbox/org/todo/todo.org"))))
 
   (when (file-exists-p "~/Dropbox/org/organisation/bookmarks.org")
     (setq org-agenda-files
-          (append org-agenda-files '("~/Dropbox/org/organisation/bookmarks.org"))))
+	  (append org-agenda-files '("~/Dropbox/org/organisation/bookmarks.org"))))
 
   (when (file-exists-p "~/Calendars")
     (setq org-agenda-files
-          (append org-agenda-files (directory-files "~/Calendars/" t "^.*\\.org$"))))
+	  (append org-agenda-files (directory-files "~/Calendars/" t "^.*\\.org$"))))
 
 
   ;; Deadline management
   (setq org-agenda-include-diary nil
-        org-deadline-warning-days 7
-        org-timeline-show-empty-dates t)
+	org-deadline-warning-days 7
+	org-timeline-show-empty-dates t)
 
 
   (defun org-agenda-cts ()
     (let ((args (get-text-property
-                 (min (1- (point-max)) (point))
-                 'org-last-args)))
+		 (min (1- (point-max)) (point))
+		 'org-last-args)))
       (nth 2 args)))
   )
 ;; Global shortcut to call org agenda
@@ -188,46 +188,47 @@
   (org-super-agenda-mode)
   (setq org-super-agenda-groups
 
-        '((:name "Important tasks ":priority "A")
-          (:name "SynSIG" :tag "SynSIG")
-          (:auto-category t)
-          )))
+	'((:name "Important tasks ":priority "A")
+	  (:name "SynSIG" :tag "SynSIG")
+	  (:auto-category t)
+	  )))
 
 ;; TODO: fail gracefully
-(defun sanityinc/grab-ditaa (url jar-name)
-  "Download URL and extract JAR-NAME as `org-ditaa-jar-path'."
-  ;; TODO: handle errors
-  (message "Grabbing " jar-name " for org.")
-  (let ((zip-temp (make-temp-name "emacs-ditaa")))
-    (unwind-protect
-        (progn
-          (when (executable-find "unzip")
-            (url-copy-file url zip-temp)
-            (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
-                                   " " (shell-quote-argument jar-name) " > "
-                                   (shell-quote-argument org-ditaa-jar-path)))))
-      (when (file-exists-p zip-temp)
-        (delete-file zip-temp)))))
-(eval-after-load 'ob-ditaa
-  (unless (and (boundp 'org-ditaa-jar-path)
-               (file-exists-p org-ditaa-jar-path))
-    (let ((jar-name "ditaa0_9.jar")
-          (url "http://jaist.dl.sourceforge.net/project/ditaa/ditaa/0.9/ditaa0_9.zip"))
-      (setq org-ditaa-jar-path (expand-file-name jar-name sea-etc-dir))
-      (unless (file-exists-p org-ditaa-jar-path)
-        (sanityinc/grab-ditaa url jar-name)))))
+;; (defun sanityinc/grab-ditaa (url jar-name)
+;;   "Download URL and extract JAR-NAME as `org-ditaa-jar-path'."
+;;   ;; TODO: handle errors
+;;   (message "Grabbing " jar-name " for org.")
+;;   (let ((zip-temp (make-temp-name "emacs-ditaa")))
+;;     (unwind-protect
+;;	(progn
+;;	  (when (executable-find "unzip")
+;;	    (url-copy-file url zip-temp)
+;;	    (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
+;;				   " " (shell-quote-argument jar-name) " > "
+;;				   (shell-quote-argument org-ditaa-jar-path)))))
+;;       (when (file-exists-p zip-temp)
+;;	(delete-file zip-temp)))))
+;; (eval-after-load 'ob-ditaa
+;;   (unless (and (boundp 'org-ditaa-jar-path)
+;;	       (file-exists-p org-ditaa-jar-path))
+;;     (let ((jar-name "ditaa0_9.jar")
+;;	  (url "http://jaist.dl.sourceforge.net/project/ditaa/ditaa/0.9/ditaa0_9.zip"))
+;;       (setq org-ditaa-jar-path (expand-file-name jar-name sea-etc-dir))
+;;       (unless (file-exists-p org-ditaa-jar-path)
+;;	(sanityinc/grab-ditaa url jar-name)))))
 
-(eval-after-load 'ob-plantuml
-  (let ((jar-name "plantuml.jar")
-        (url "http://jaist.dl.sourceforge.net/project/plantuml/plantuml.jar"))
-    (setq org-plantuml-jar-path (expand-file-name jar-name sea-etc-dir))
-    (unless (file-exists-p org-plantuml-jar-path)
-      (url-copy-file url org-plantuml-jar-path))))
+(defvar plantuml-jar-path (expand-file-name "plantuml.jar" sea-etc-dir)
+  "plantuml dir")
+(defun sea/plantuml-install()
+  (let ((url "http://jaist.dl.sourceforge.net/project/plantuml/plantuml.jar"))
+    (unless (file-exists-p plantuml-jar-path)
+      (url-copy-file url plantuml-jar-path))))
+(add-hook 'org-mode-hook '(lambda () (eval-after-load 'ob-plantuml (sea/plantuml-install))))
 
 (defun sea/download-clip()
   "Download Clip.jar to etc dir"
   (let ((jar-name "Clip.jar")
-        (url "https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.13/sbt-launch.jar"))
+	(url "https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.13/sbt-launch.jar"))
     (setq org-clip-jar-path (expand-file-name jar-name sea-etc-dir))
     (unless (file-exists-p org-clip-jar-path)
       (url-copy-file url org-clip-jar-path))))
@@ -239,48 +240,48 @@
     (insert
      (org-make-link-string
       (concat "file:"
-              (shell-command-to-string
-               (mapconcat #'identity
-                          `("java"
-                            "-jar"
-                            ,(expand-file-name org-clip-jar-path)
-                            "--uuid"
-                            ,(file-relative-name dir default-directory)
-                            )
-                          " "
-                          )))))))
+	      (shell-command-to-string
+	       (mapconcat #'identity
+			  `("java"
+			    "-jar"
+			    ,(expand-file-name org-clip-jar-path)
+			    "--uuid"
+			    ,(file-relative-name dir default-directory)
+			    )
+			  " "
+			  )))))))
 
 
 (use-package plantuml-mode
   :init
-  (setq plantuml-jar-path (expand-file-name sea-etc-dir "plantuml.jar"))
   ;; Enable plantuml-mode for PlantUML files
-  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+  )
 
 
 (use-package org-projectile
   :config
   (org-projectile:per-repo)
   (setq org-projectile:per-repo-filename "todo.org"
-        org-agenda-files (append org-agenda-files (org-projectile:todo-files))))
+	org-agenda-files (append org-agenda-files (org-projectile:todo-files))))
 
 
 ;; Add languages
 (use-package ob-ipython :ensure t)
 (org-babel-do-load-languages 'org-babel-load-languages
-                             '((emacs-lisp . t)
-                               (dot . t)
-                               (ditaa . t)
-                               (R . t)
-                               (ipython . t)
-                               (ruby . t)
-                               (gnuplot . t)
-                               (clojure . t)
-                               (shell . t)
-                               (ledger . t)
-                               (org . t)
-                               (plantuml . t)
-                               (latex . t)))
+			     '((emacs-lisp . t)
+			       (dot . t)
+			       (ditaa . t)
+			       (R . t)
+			       (ipython . t)
+			       (ruby . t)
+			       (gnuplot . t)
+			       (clojure . t)
+			       (shell . t)
+			       (ledger . t)
+			       (org . t)
+			       (plantuml . t)
+			       (latex . t)))
 ;; Define specific modes for specific tools
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
@@ -290,27 +291,27 @@
   :config
   ;; Define the templates
   (setq org-structure-template-alist
-        '(("s" "#+begin_src ?\n\n#+end_src" "<src lang=\"?\">\n\n</src>")
-          ("e" "#+begin_example\n?\n#+end_example" "<example>\n?\n</example>")
-          ("q" "#+begin_quote\n?\n#+end_quote" "<quote>\n?\n</quote>")
-          ("v" "#+begin_verse\n?\n#+end_verse" "<verse>\n?\n/verse>")
-          ("c" "#+begin_center\n?\n#+end_center" "<center>\n?\n/center>")
-          ("l" "#+begin_export latex\n?\n#+end_export" "<literal style=\"latex\">\n?\n</literal>")
-          ("L" "#+latex: " "<literal style=\"latex\">?</literal>")
-          ("h" "#+begin_export html\n?\n#+end_exrt" "<literal style=\"html\">\n?\n</literal>")
-          ("H" "#+html: " "<literal style=\"html\">?</literal>")
-          ("a" "#+begin_export ascii\n?\n#+end_export")
-          ("A" "#+ascii: ")
-          ("i" "#+index: ?" "#+index: ?")
-          ("I" "#+include: %file ?" "<include file=%file markup=\"?\">")))
+	'(("s" "#+begin_src ?\n\n#+end_src" "<src lang=\"?\">\n\n</src>")
+	  ("e" "#+begin_example\n?\n#+end_example" "<example>\n?\n</example>")
+	  ("q" "#+begin_quote\n?\n#+end_quote" "<quote>\n?\n</quote>")
+	  ("v" "#+begin_verse\n?\n#+end_verse" "<verse>\n?\n/verse>")
+	  ("c" "#+begin_center\n?\n#+end_center" "<center>\n?\n/center>")
+	  ("l" "#+begin_export latex\n?\n#+end_export" "<literal style=\"latex\">\n?\n</literal>")
+	  ("L" "#+latex: " "<literal style=\"latex\">?</literal>")
+	  ("h" "#+begin_export html\n?\n#+end_exrt" "<literal style=\"html\">\n?\n</literal>")
+	  ("H" "#+html: " "<literal style=\"html\">?</literal>")
+	  ("a" "#+begin_export ascii\n?\n#+end_export")
+	  ("A" "#+ascii: ")
+	  ("i" "#+index: ?" "#+index: ?")
+	  ("I" "#+include: %file ?" "<include file=%file markup=\"?\">")))
 
   ;; Shortcuts
   (defun hot-expand (str &optional mod)
     "Expand org template."
     (let (text)
       (when (region-active-p)
-        (setq text (buffer-substring (region-beginning) (region-end)))
-        (delete-region (region-beginning) (region-end)))
+	(setq text (buffer-substring (region-beginning) (region-end)))
+	(delete-region (region-beginning) (region-end)))
       (insert str)
       (org-try-structure-completion)
       (when mod (insert mod) (forward-line))
@@ -355,8 +356,8 @@ _h_: html          _S_: shell
   (define-key org-mode-map "<"
     (lambda () (interactive)
       (if (or (region-active-p) (looking-back "^"))
-          (hydra-org-template/body)
-        (self-insert-command 1))))
+	  (hydra-org-template/body)
+	(self-insert-command 1))))
   )
 ;; id generation
 (use-package org-id+
