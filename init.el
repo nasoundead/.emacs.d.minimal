@@ -69,8 +69,10 @@ Use this for files that change often, like cache files.")
 
 (require 'quelpa-use-package)
 
+(add-to-list 'load-path (concat user-emacs-directory "core"))
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 (add-to-list 'load-path (concat user-emacs-directory "site-lisp"))
+(require 'core-keybinds)
 (require 'init-evil)
 (require 'init-basic)
 (require 'init-edit)

@@ -40,16 +40,22 @@
   (setq org-hide-emphasis-markers t)
   ;; Editing
   (setq org-list-allow-alphabetical t
-	org-highlight-latex-and-related '(latex)
-	org-babel-results-keyword "results" ;; Display images directly in the buffer
-	org-confirm-babel-evaluate nil
-	org-startup-with-inline-images t)
+        org-highlight-latex-and-related '(latex)
+        org-babel-results-keyword "results" ;; Display images directly in the buffer
+        org-confirm-babel-evaluate nil
+        org-startup-with-inline-images t)
+        org-startup-indented t
 
+        org-list-description-max-indent 4
+        org-priority-faces
+        '((?A . error)
+          (?B . warning)
+          (?C . success))
 
-  ;; Activate spelling
-  (add-hook 'org-mode 'flyspell-mode)
-  (add-to-list 'org-export-backends 'md)
-  (add-to-list 'ispell-skip-region-alist '("^#+begin_src" . "^#+end_src"))
+        ;; Activate spelling
+        (add-hook 'org-mode 'flyspell-mode)
+        (add-to-list 'org-export-backends 'md)
+        (add-to-list 'ispell-skip-region-alist '("^#+begin_src" . "^#+end_src"))
 
 
   ;; (custom-theme-set-faces
